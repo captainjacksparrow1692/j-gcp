@@ -1,4 +1,8 @@
 package uzumtech.j_gcp.service;
 
-public class UserValidationService {
+import uzumtech.j_gcp.dto.request.UserRequestDto;
+
+public interface UserValidationService {
+
+    void validateUniqueness(UserRequestDto requestDto);
 }
