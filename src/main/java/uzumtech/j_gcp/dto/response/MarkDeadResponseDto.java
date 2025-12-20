@@ -11,5 +11,4 @@ public class MarkDeadResponseDto {
     private Long userId;
     private String pinfl;
     private LocalDate deathDate;
-    private String status; // Например, "UPDATED" или "SUCCESS"
 }

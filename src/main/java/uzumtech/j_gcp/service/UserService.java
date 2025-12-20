@@ -20,7 +20,7 @@ public interface UserService {
     MarkDeadResponseDto markUserAsDead(Long id, LocalDate deathDate);
 
     //поиски юзеров
-    List<UserResponseDto> searchUsersByName(String name);
+    List<UserResponseDto> searchUsersByName(String fullname);
 
     List<UserResponseDto> getAllAliveUsers();
     List<UserResponseDto> getAllDeadUsers();

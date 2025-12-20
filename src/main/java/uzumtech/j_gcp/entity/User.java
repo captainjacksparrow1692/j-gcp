@@ -20,7 +20,7 @@ public class User {
     private Long id;
 
     @Column(nullable = false)
-    private String name;
+    private String fullName;
     @Column(nullable = false)
     private String address;
     @Column(nullable = false,  unique = true)
@@ -37,7 +37,7 @@ public class User {
     @Column(nullable = false)
     private DocumentType documentType;
     @Column(nullable = false)
-    private LocalDate issueDate;;
+    private LocalDate issueDate;
     @Column(nullable = false)
     private LocalDate expiryDate;
     @Column(nullable = false)

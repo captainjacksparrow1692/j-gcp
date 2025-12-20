@@ -6,13 +6,13 @@ import uzumtech.j_gcp.constant.DocumentType;
 
 import java.time.LocalDate;
 
-@Data
+@Getter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserRequestDto {
     @NotBlank(message = "Имя обязательно")
-    private String name;
+    private String fullName;
 
     @NotBlank(message = "Адрес обязателен")
     private String address;
@@ -42,4 +42,7 @@ public class UserRequestDto {
 
     @NotBlank
     private String citizenship;
+
+    @PastOrPresent(message = "Death date must be in the past or present")
+    LocalDate deathDate;
 }
