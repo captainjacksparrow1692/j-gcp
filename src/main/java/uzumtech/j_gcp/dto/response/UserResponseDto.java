@@ -1,37 +1,31 @@
 package uzumtech.j_gcp.dto.response;
 
-import lombok.Builder;
-import org.w3c.dom.DocumentType;
+import lombok.*;
+import uzumtech.j_gcp.constant.DocumentType;
 
 import java.time.LocalDate;
 
+@Data
 @Builder
-public record UserResponseDto(
-        //id пользователя
-        Long id,
-        //имя пользователя
-        String fullName,
-        //адрес проживания
-        String address,
-        //номер телефона
-        String phoneNumber,
-        //электронная почта
-        String email,
-        //ссылка на фотографию
-        String photoUrl,
-        //персональный идентификационный номер (14 символов)
-        String pinfl,
-        //возраст пользователя
-        Integer age,
-        //тип документа (паспорт, id-карта и др.)
-        DocumentType documentType,
-        //дата выдачи документа
-        LocalDate issueDate,
-        //дата окончания срока действия документа
-        LocalDate expiryDate,
-        //гражданство
-        String citizenship,
-        //дата смерти (если применимо)
-        LocalDate deathDate
-) {
+@NoArgsConstructor
+@AllArgsConstructor
+public class UserResponseDto {
+    private Long id;
+    private String name;
+    private String address;
+    private String email;
+    private String phoneNumber;
+    private String photoUrl;
+    private Integer age;
+    private String pinfl;
+    private DocumentType documentType;
+    private LocalDate issueDate;
+    private LocalDate expiryDate;
+    private String citizenship;
+    private LocalDate deathDate; // null, если пользователь жив
+
+    // Вспомогательное поле для фронтенда
+    public boolean isAlive() {
+        return deathDate == null;
+    }
 }

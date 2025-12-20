@@ -1,16 +1,15 @@
 package uzumtech.j_gcp.dto.response;
 
-import lombok.Builder;
-
+import lombok.*;
 import java.time.LocalDate;
 
+@Data
 @Builder
-public record MarkDeadResponseDto(
-        //id пользователя
-        Long id,
-        //имя пользователя
-        String fullName,
-        // дата смерти пользователя
-        LocalDate deathDate
-) {
+@NoArgsConstructor
+@AllArgsConstructor
+public class MarkDeadResponseDto {
+    private Long userId;
+    private String pinfl;
+    private LocalDate deathDate;
+    private String status; // Например, "UPDATED" или "SUCCESS"
 }
