@@ -5,7 +5,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.w3c.dom.DocumentType; // Внимание: обычно DocumentType — это ваш Enum, а не интерфейс w3c
 import uzumtech.j_gcp.dto.request.UserRequestDto;
 import uzumtech.j_gcp.dto.response.MarkDeadResponseDto;
 import uzumtech.j_gcp.dto.response.UserResponseDto;
@@ -18,8 +17,6 @@ import uzumtech.j_gcp.service.UserService;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import static sun.awt.image.MultiResolutionCachedImage.map;
 
 @Service
 @RequiredArgsConstructor
