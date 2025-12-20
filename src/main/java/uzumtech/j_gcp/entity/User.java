@@ -21,27 +21,38 @@ public class User {
 
     @Column(nullable = false)
     private String fullName;
+
     @Column(nullable = false)
     private String address;
+
     @Column(nullable = false,  unique = true)
     private String email;
+
     @Column(nullable = false)
     private String phoneNumber;
-    @Column(name = "photo_url",nullable = true)
+
+    @Column(name = "photo_url")
     private String photoUrl;
+
     @Column(nullable = false)
     private Integer age;
+
     @Column(nullable = false,   unique = true, length = 14)
     private String pinfl;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private DocumentType documentType;
+
     @Column(nullable = false)
     private LocalDate issueDate;
+
     @Column(nullable = false)
     private LocalDate expiryDate;
+
     @Column(nullable = false)
     private String citizenship;
-    @Column(name = "death_date",nullable = true)
+
+    @Column(name = "death_date")
     private LocalDate deathDate;
 }

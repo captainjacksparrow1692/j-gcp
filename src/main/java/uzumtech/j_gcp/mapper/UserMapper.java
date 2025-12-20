@@ -8,8 +8,14 @@ import uzumtech.j_gcp.entity.User;
 
 @Component
 public class UserMapper {
+
     public User toEntity(UserRequestDto requestDto) {
+        if (requestDto == null) {
+            return null;
+        }
+
         return User.builder()
+                .fullName(requestDto.getFullName()) // ЭТОЙ СТРОЧКИ НЕ ХВАТАЛО
                 .address(requestDto.getAddress())
                 .pinfl(requestDto.getPinfl())
                 .phoneNumber(requestDto.getPhoneNumber())
@@ -25,6 +31,10 @@ public class UserMapper {
     }
 
     public UserResponseDto toResponseDto(User user) {
+        if (user == null) {
+            return null;
+        }
+
         return UserResponseDto.builder()
                 .id(user.getId())
                 .fullName(user.getFullName())
@@ -43,11 +53,16 @@ public class UserMapper {
     }
 
     public MarkDeadResponseDto toMarkDeadResponseDto(User user) {
+        if (user == null) {
+            return null;
+        }
+
         return MarkDeadResponseDto.builder()
                 .userId(user.getId())
                 .pinfl(user.getPinfl())
                 .deathDate(user.getDeathDate())
+                // Если в DTO есть поле status, добавь его здесь:
+                // .status(user.getDeathDate() != null ? "DECEASED" : "ALIVE")
                 .build();
-
     }
 }
