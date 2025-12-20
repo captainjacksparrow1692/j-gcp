@@ -11,32 +11,44 @@ import java.time.LocalDate;
 import java.util.List;
 
 public interface UserService {
+
+    // Основные операции CRUD
     UserResponseDto createUser(UserRequestDto userRequestDto);
+
     Page<UserResponseDto> getAllUsers(PageRequest pageRequest);
+
     UserResponseDto getUserById(Long id);
+
     UserResponseDto getUserByUserPinfl(String pinfl);
 
+    // Логика статуса жизни
     boolean isUserAlive(Long id);
+
     MarkDeadResponseDto markUserAsDead(Long id, LocalDate deathDate);
 
-    //поиски юзеров
+    // Поисковые методы
     List<UserResponseDto> searchUsersByName(String fullName);
 
     List<UserResponseDto> getAllAliveUsers();
+
     List<UserResponseDto> getAllDeadUsers();
-    //подсчет юзеров
+
+    // Методы подсчета (статистика)
     long getAllDeadUsersCount();
+
     long getAllAliveUsersCount();
 
-    //по документам
+    // Работа с документами
     List<UserResponseDto> getUsersWithExpiredDocuments();
 
     List<UserResponseDto> getUsersWithDocumentsExpiringBetween(LocalDate start, LocalDate end);
 
+    // Поиск по типу документа (используем ваш Enum)
     List<UserResponseDto> getUsersByDocumentType(DocumentType documentType);
 
+    // Метод для совместимости (если где-то еще используется системный DocumentType)
     List<UserResponseDto> getUsersByDocumentType(org.w3c.dom.DocumentType documentType);
 
-    //микс запросы
+    // Сложные запросы (микс)
     List<UserResponseDto> getAliveUsersWithExpiredDocuments();
 }

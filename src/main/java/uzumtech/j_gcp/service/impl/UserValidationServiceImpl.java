@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import uzumtech.j_gcp.dto.request.UserRequestDto;
+import uzumtech.j_gcp.exception.UserAlreadyExistsException;
 import uzumtech.j_gcp.repository.UserRepository;
 import uzumtech.j_gcp.service.UserValidationService;
 
@@ -13,20 +14,21 @@ public class UserValidationServiceImpl implements UserValidationService {
 
     private final UserRepository userRepository;
 
-    // проверяет уникальность email, pinfl и номера телефона перед созданием нового пользователя
     @Override
     @Transactional(readOnly = true)
     public void validateUniqueness(UserRequestDto requestDto) {
-        if (userRepository.existsByPinfl(requestDto.pinfl())) {
-            throw new ConflictException("User with this PINFL already exists");
+        // Для обычного класса с @Getter используем get + имя поля
+
+        if (userRepository.existsByPinfl(requestDto.getPinfl())) {
+            throw new UserAlreadyExistsException("Пользователь с ПИНФЛ %s уже существует".formatted(requestDto.getPinfl()));
         }
 
-        if (userRepository.existsByEmail(requestDto.email())) {
-            throw new ConflictException("User with this email already exists");
+        if (userRepository.existsByEmail(requestDto.getEmail())) {
+            throw new UserAlreadyExistsException("Пользователь с email %s уже существует".formatted(requestDto.getEmail()));
         }
 
-        if (userRepository.existsByPhoneNumber(requestDto.phoneNumber())) {
-            throw new ConflictException("User with this phone number already exists");
+        if (userRepository.existsByPhoneNumber(requestDto.getPhoneNumber())) {
+            throw new UserAlreadyExistsException("Пользователь с номером телефона %s уже существует".formatted(requestDto.getPhoneNumber()));
         }
     }
 }

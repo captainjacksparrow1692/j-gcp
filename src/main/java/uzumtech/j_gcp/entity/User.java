@@ -27,7 +27,7 @@ public class User {
     private String email;
     @Column(nullable = false)
     private String phoneNumber;
-    @Column(nullable = false)
+    @Column(name = "photo_url",nullable = true)
     private String photoUrl;
     @Column(nullable = false)
     private Integer age;
@@ -42,6 +42,6 @@ public class User {
     private LocalDate expiryDate;
     @Column(nullable = false)
     private String citizenship;
-    @Column(nullable = false)
+    @Column(name = "death_date",nullable = true)
     private LocalDate deathDate;
 }
