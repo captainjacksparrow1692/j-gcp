@@ -13,29 +13,33 @@ import java.util.Optional;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
+    //поиск по пинфлу
     Optional<User> findByPinfl(String pinfl);
 
+    //поиск пользователей по ФИО (без учёта регистра) с пагинацией
     Page<User> findAllByFullNameContainingIgnoreCase(String fullName, Pageable pageable);
-    List<User> findAllByFullNameContainingIgnoreCase(String fullName);
 
+    //поиск всех живых пользователей (дата смерти отсутствует)
     List<User> findAllByDeathDateIsNull();
+
+    //поиск всех умерших пользователей
     List<User> findAllByDeathDateIsNotNull();
 
+    // посчитать количество живых и не живых пользователей
     long countByDeathDateIsNull();
     long countByDeathDateIsNotNull();
 
+    //найти пользователей с истёкшим сроком действия документа
     List<User> findAllByExpiryDateBefore(LocalDate date);
+    //найти пользователей с истёкающим сроком действия документа
     List<User> findAllByExpiryDateBetween(LocalDate start, LocalDate end);
-    List<User> findAllByDocumentType(DocumentType documentType);
-
+    //найти живых пользователей с истёкшим сроком действия документа
     List<User> findAllByDeathDateIsNullAndExpiryDateBefore(LocalDate date);
-
-    // --- ДОПИСАТЬ СЮДА ---
+    //найти пользователей по типу документа
+    List<User> findAllByDocumentType(DocumentType documentType);
 
     // Проверка существования для валидации уникальности
     boolean existsByPinfl(String pinfl);
-
     boolean existsByEmail(String email);
-
     boolean existsByPhoneNumber(String phoneNumber);
 }
