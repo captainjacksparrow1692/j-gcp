@@ -1,11 +1,9 @@
 package uzumtech.j_gcp.dto.response;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Builder;
 import java.time.LocalDateTime;
 
-@Data
-@AllArgsConstructor
+@Builder
 public class ErrorResponse {
     //Время возникновения ошибки
     private LocalDateTime timestamp;
