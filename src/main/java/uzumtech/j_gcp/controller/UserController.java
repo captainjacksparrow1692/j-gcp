@@ -2,7 +2,7 @@ package uzumtech.j_gcp.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,7 +14,6 @@ import uzumtech.j_gcp.dto.response.UserResponseDto;
 import uzumtech.j_gcp.service.UserService;
 
 import java.time.LocalDate;
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/users")
@@ -23,7 +22,7 @@ public class UserController {
 
     private final UserService userService;
 
-    // --- ОСНОВНЫЕ ОПЕРАЦИИ (CRUD) ---
+    //CRUD
 
     @PostMapping
     public ResponseEntity<UserResponseDto> createUser(@RequestBody UserRequestDto requestDto) {
@@ -31,10 +30,8 @@ public class UserController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<UserResponseDto>> getAllUsers(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
-        return ResponseEntity.ok(userService.getAllUsers(PageRequest.of(page, size)));
+    public ResponseEntity<Page<UserResponseDto>> getAllUsers(Pageable pageable) {
+        return ResponseEntity.ok(userService.getAllUsers(pageable));
     }
 
     @GetMapping("/{id}")
@@ -47,7 +44,7 @@ public class UserController {
         return ResponseEntity.ok(userService.getUserByUserPinfl(pinfl));
     }
 
-    // --- ЛОГИКА СМЕРТИ ---
+    //Статус жизни
 
     @PatchMapping("/{id}/mark-dead")
     public ResponseEntity<MarkDeadResponseDto> markAsDead(
@@ -61,51 +58,59 @@ public class UserController {
         return ResponseEntity.ok(userService.isUserAlive(id));
     }
 
-    // --- ПОИСК И ФИЛЬТРЫ ---
+    //Поиск и фильтры
 
     @GetMapping("/search")
-    public ResponseEntity<List<UserResponseDto>> searchByName(@RequestParam String name) {
-        return ResponseEntity.ok(userService.searchUsersByName(name));
+    public ResponseEntity<Page<UserResponseDto>> searchByName(
+            @RequestParam String name,
+            Pageable pageable) {
+        return ResponseEntity.ok(userService.searchUsersByName(name, pageable));
     }
 
-    @GetMapping("/filter/alive")
-    public ResponseEntity<List<UserResponseDto>> getAlive() {
-        return ResponseEntity.ok(userService.getAllAliveUsers());
+    @GetMapping("/filter/status")
+    public ResponseEntity<Page<UserResponseDto>> filterByStatus(
+            @RequestParam String status,
+            Pageable pageable) {
+        if ("ALIVE".equalsIgnoreCase(status)) {
+            return ResponseEntity.ok(userService.getAllAliveUsers(pageable));
+        } else if ("DEAD".equalsIgnoreCase(status)) {
+            return ResponseEntity.ok(userService.getAllDeadUsers(pageable));
+        } else {
+            return ResponseEntity.badRequest().build();
+        }
     }
 
-    @GetMapping("/filter/dead")
-    public ResponseEntity<List<UserResponseDto>> getDead() {
-        return ResponseEntity.ok(userService.getAllDeadUsers());
-    }
-
-    // --- ДОКУМЕНТЫ ---
+    //Работа с документами
 
     @GetMapping("/documents/expired")
-    public ResponseEntity<List<UserResponseDto>> getWithExpiredDocs() {
-        return ResponseEntity.ok(userService.getUsersWithExpiredDocuments());
+    public ResponseEntity<Page<UserResponseDto>> getWithExpiredDocs(Pageable pageable) {
+        return ResponseEntity.ok(userService.getUsersWithExpiredDocuments(pageable));
     }
 
-    @GetMapping("/documents/type")
-    public ResponseEntity<List<UserResponseDto>> getByDocType(@RequestParam DocumentType type) {
-        return ResponseEntity.ok(userService.getUsersByDocumentType(type));
+    @GetMapping("/documents/type/{type}")
+    public ResponseEntity<Page<UserResponseDto>> getByDocType(
+            @PathVariable DocumentType type,
+            Pageable pageable) {
+        return ResponseEntity.ok(userService.getUsersByDocumentType(type, pageable));
     }
 
     @GetMapping("/documents/expiring-between")
-    public ResponseEntity<List<UserResponseDto>> getExpiringBetween(
+    public ResponseEntity<Page<UserResponseDto>> getExpiringBetween(
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate start,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate end) {
-        return ResponseEntity.ok(userService.getUsersWithDocumentsExpiringBetween(start, end));
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate end,
+            Pageable pageable) {
+        return ResponseEntity.ok(userService.getUsersWithDocumentsExpiringBetween(start, end, pageable));
     }
 
-    // --- СТАТИСТИКА ---
+    //Статистика
 
     @GetMapping("/stats/count-alive")
     public ResponseEntity<Long> countAlive() {
-        return ResponseEntity.ok(userService.getAllAliveUsersCount());
+        return ResponseEntity.ok(userService.getAllAliveUsers());
     }
 
     @GetMapping("/stats/count-dead")
     public ResponseEntity<Long> countDead() {
-        return ResponseEntity.ok(userService.getAllDeadUsersCount());
+        return ResponseEntity.ok(userService.getAllDeadUsers());
     }
 }
