@@ -29,6 +29,7 @@ public class UserServiceImpl implements UserService {
         if (userRepository.existsByPinfl(userRequestDto.getPinfl())) {
             throw new RuntimeException("User with this PINFL already exists");
         }
+
         User user = new User();
         user.setFullName(userRequestDto.getFullName());
         user.setPinfl(userRequestDto.getPinfl());
@@ -36,10 +37,17 @@ public class UserServiceImpl implements UserService {
         user.setPhoneNumber(userRequestDto.getPhoneNumber());
         user.setDocumentType(userRequestDto.getDocumentType());
         user.setExpiryDate(userRequestDto.getExpiryDate());
-        user.setDeathDate(null); // по умолчанию жив
+        user.setDeathDate(userRequestDto.getDeathDate()); // может быть null
+        user.setAddress(userRequestDto.getAddress());
+        user.setCitizenship(userRequestDto.getCitizenship());
+        user.setAge(userRequestDto.getAge()); // напрямую из DTO
+        user.setPhotoUrl(userRequestDto.getPhotoUrl());
+        user.setIssueDate(userRequestDto.getIssueDate());
+
         user = userRepository.save(user);
         return toDto(user);
     }
+
 
     @Override
     public Page<UserResponseDto> getAllUsers(Pageable pageable) {
