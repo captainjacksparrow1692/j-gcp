@@ -8,8 +8,9 @@ import java.time.LocalDate;
 
 @Builder
 public record MarkDeadRequestDto (
-        // дата смерти пользователя
-        @NotNull(message = "Death date is required")
-        @PastOrPresent(message = "Death date must be in the past or present")
+
+        // Дата смерти пользователя
+        @NotNull(message = "Дата смерти обязательна")
+        @PastOrPresent(message = "Дата смерти должна быть в прошлом или настоящем")
         LocalDate deathDate) {
 }
