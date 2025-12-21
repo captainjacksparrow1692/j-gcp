@@ -27,7 +27,7 @@ public class UserRequestDto {
     // Номер телефона (международный формат)
     @NotBlank(message = "Номер телефона обязателен")
     @Pattern(
-            regexp = "^\\+?[0-9]{9,15}$",
+            regexp = "^\\+\\d{9,15}$",
             message = "Номер телефона должен быть в международном формате"
     )
     private String phoneNumber;

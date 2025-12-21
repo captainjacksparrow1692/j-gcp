@@ -23,6 +23,10 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
 
+    // Constant for repeated error message
+    private static final String USER_NOT_FOUND = "User not found";
+
+
     //CRUD
     @Override
     public UserResponseDto createUser(UserRequestDto userRequestDto) {
@@ -58,14 +62,14 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserResponseDto getUserById(Long id) {
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new RuntimeException(USER_NOT_FOUND));
         return toDto(user);
     }
 
     @Override
     public UserResponseDto getUserByUserPinfl(String pinfl) {
         User user = userRepository.findByPinfl(pinfl)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new RuntimeException(USER_NOT_FOUND));
         return toDto(user);
     }
 
@@ -80,7 +84,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public MarkDeadResponseDto markUserAsDead(Long id, LocalDate deathDate) {
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new RuntimeException(USER_NOT_FOUND));
         user.setDeathDate(deathDate);
         userRepository.save(user);
 
