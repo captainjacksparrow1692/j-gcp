@@ -1,7 +1,7 @@
 package uzumtech.j_gcp.mapper;
 
 import org.springframework.stereotype.Component;
-import uzumtech.j_gcp.constant.LifeStatus;
+import uzumtech.j_gcp.constant.enums.LifeStatus;
 import uzumtech.j_gcp.dto.request.UserRequestDto;
 import uzumtech.j_gcp.dto.response.MarkDeadResponseDto;
 import uzumtech.j_gcp.dto.response.UserResponseDto;

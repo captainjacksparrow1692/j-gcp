@@ -2,7 +2,7 @@ package uzumtech.j_gcp.service;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import uzumtech.j_gcp.constant.DocumentType;
+import uzumtech.j_gcp.constant.enums.DocumentType;
 import uzumtech.j_gcp.dto.request.UserRequestDto;
 import uzumtech.j_gcp.dto.response.MarkDeadResponseDto;
 import uzumtech.j_gcp.dto.response.UserResponseDto;

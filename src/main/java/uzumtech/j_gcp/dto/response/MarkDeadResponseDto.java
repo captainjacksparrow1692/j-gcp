@@ -1,7 +1,7 @@
 package uzumtech.j_gcp.dto.response;
 
 import lombok.*;
-import uzumtech.j_gcp.constant.LifeStatus;
+import uzumtech.j_gcp.constant.enums.LifeStatus;
 
 import java.time.LocalDate;
 

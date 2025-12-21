@@ -2,7 +2,7 @@ package uzumtech.j_gcp.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import uzumtech.j_gcp.constant.DocumentType;
+import uzumtech.j_gcp.constant.enums.DocumentType;
 
 import java.time.LocalDate;
 

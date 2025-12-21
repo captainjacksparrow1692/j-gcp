@@ -5,7 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import uzumtech.j_gcp.constant.DocumentType;
+import uzumtech.j_gcp.constant.enums.DocumentType;
 import uzumtech.j_gcp.dto.request.MarkDeadRequestDto;
 import uzumtech.j_gcp.dto.request.UserRequestDto;
 import uzumtech.j_gcp.dto.response.MarkDeadResponseDto;

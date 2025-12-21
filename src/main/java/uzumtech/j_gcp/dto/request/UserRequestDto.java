@@ -2,7 +2,7 @@ package uzumtech.j_gcp.dto.request;
 
 import jakarta.validation.constraints.*;
 import lombok.*;
-import uzumtech.j_gcp.constant.DocumentType;
+import uzumtech.j_gcp.constant.enums.DocumentType;
 
 import java.time.LocalDate;
 
