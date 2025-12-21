@@ -1,54 +1,52 @@
 package uzumtech.j_gcp.service;
 
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import uzumtech.j_gcp.constant.DocumentType;
 import uzumtech.j_gcp.dto.request.UserRequestDto;
 import uzumtech.j_gcp.dto.response.MarkDeadResponseDto;
 import uzumtech.j_gcp.dto.response.UserResponseDto;
 
 import java.time.LocalDate;
-import java.util.List;
-
 public interface UserService {
 
-    // Основные операции CRUD
+    //CRUD
     UserResponseDto createUser(UserRequestDto userRequestDto);
 
-    Page<UserResponseDto> getAllUsers(PageRequest pageRequest);
+    Page<UserResponseDto> getAllUsers(Pageable pageable);
 
     UserResponseDto getUserById(Long id);
 
     UserResponseDto getUserByUserPinfl(String pinfl);
 
-    // Логика статуса жизни
+    //Статус жизни
     boolean isUserAlive(Long id);
 
     MarkDeadResponseDto markUserAsDead(Long id, LocalDate deathDate);
 
-    // Поисковые методы
-    List<UserResponseDto> searchUsersByName(String fullName);
+    // Поиск
+    Page<UserResponseDto> searchUsersByName(String fullName, Pageable pageable);
 
-    List<UserResponseDto> getAllAliveUsers();
+    Page<UserResponseDto> getAllAliveUsers(Pageable pageable);
 
-    List<UserResponseDto> getAllDeadUsers();
+    Page<UserResponseDto> getAllDeadUsers(Pageable pageable);
 
-    // Методы подсчета (статистика)
-    long getAllDeadUsersCount();
+    //Статистика
+    enum Status {
+        ALIVE, DEAD
+    }
 
-    long getAllAliveUsersCount();
+    long getUsersCountByStatus(Status status);
 
-    // Работа с документами
-    List<UserResponseDto> getUsersWithExpiredDocuments();
+    //Работа с документами
+    Page<UserResponseDto> getUsersWithExpiredDocuments(Pageable pageable);
 
-    List<UserResponseDto> getUsersWithDocumentsExpiringBetween(LocalDate start, LocalDate end);
+    Page<UserResponseDto> getUsersWithDocumentsExpiringBetween(LocalDate start, LocalDate end, Pageable pageable);
 
-    // Поиск по типу документа (используем ваш Enum)
-    List<UserResponseDto> getUsersByDocumentType(DocumentType documentType);
+    Page<UserResponseDto> getUsersByDocumentType(DocumentType documentType, Pageable pageable);
 
-    // Метод для совместимости (если где-то еще используется системный DocumentType)
-    List<UserResponseDto> getUsersByDocumentType(org.w3c.dom.DocumentType documentType);
+    Page<UserResponseDto> getUsersBySystemDocumentType(org.w3c.dom.DocumentType documentType, Pageable pageable);
 
-    // Сложные запросы (микс)
-    List<UserResponseDto> getAliveUsersWithExpiredDocuments();
+    // Сложные запросы
+    Page<UserResponseDto> getAliveUsersWithExpiredDocuments(Pageable pageable);
 }

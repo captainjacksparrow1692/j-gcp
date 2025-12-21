@@ -2,7 +2,7 @@ package uzumtech.j_gcp.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import uzumtech.j_gcp.constant.DocumentType;
@@ -15,10 +15,11 @@ import uzumtech.j_gcp.exception.ResourceNotFoundException;
 import uzumtech.j_gcp.mapper.UserMapper;
 import uzumtech.j_gcp.repository.UserRepository;
 import uzumtech.j_gcp.service.UserService;
-import uzumtech.j_gcp.service.UserValidationService; // Добавили импорт
+import uzumtech.j_gcp.service.UserValidationService;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -27,22 +28,20 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final UserMapper userMapper;
-    private final UserValidationService userValidationService; // Внедряем сервис валидации
+    private final UserValidationService userValidationService;
 
+    //CRUD
     @Override
     @Transactional
     public UserResponseDto createUser(UserRequestDto userRequestDto) {
-        // ПЕРВОЕ: Проверяем уникальность данных через валидатор
         userValidationService.validateUniqueness(userRequestDto);
-
-        // ВТОРОЕ: Если валидация прошла (не вылетел Exception), сохраняем
         User user = userMapper.toEntity(userRequestDto);
         return userMapper.toResponseDto(userRepository.save(user));
     }
 
     @Override
-    public Page<UserResponseDto> getAllUsers(PageRequest pageRequest) {
-        return userRepository.findAll(pageRequest)
+    public Page<UserResponseDto> getAllUsers(Pageable pageable) {
+        return userRepository.findAll(pageable)
                 .map(userMapper::toResponseDto);
     }
 
@@ -60,6 +59,7 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new ResourceNotFoundException("Пользователь с ПИНФЛ " + pinfl + " не найден"));
     }
 
+    //Статус жизни
     @Override
     public boolean isUserAlive(Long id) {
         User user = userRepository.findById(id)
@@ -80,9 +80,6 @@ public class UserServiceImpl implements UserService {
         user.setDeathDate(deathDate);
         User savedUser = userRepository.save(user);
 
-        // Используем маппер
-        var info = userMapper.toMarkDeadResponseDto(savedUser);
-
         return MarkDeadResponseDto.builder()
                 .userId(savedUser.getId())
                 .deathDate(savedUser.getDeathDate())
@@ -90,28 +87,32 @@ public class UserServiceImpl implements UserService {
                 .build();
     }
 
+    //Поиск
     @Override
     public List<UserResponseDto> searchUsersByName(String fullName) {
         return userRepository.findAllByFullNameContainingIgnoreCase(fullName)
                 .stream()
                 .map(userMapper::toResponseDto)
-                .toList();
+                .collect(Collectors.toList());
     }
 
     @Override
     public List<UserResponseDto> getAllAliveUsers() {
-        return userRepository.findAllByDeathDateIsNull().stream()
+        return userRepository.findAllByDeathDateIsNull()
+                .stream()
                 .map(userMapper::toResponseDto)
-                .toList();
+                .collect(Collectors.toList());
     }
 
     @Override
     public List<UserResponseDto> getAllDeadUsers() {
-        return userRepository.findAllByDeathDateIsNotNull().stream()
+        return userRepository.findAllByDeathDateIsNotNull()
+                .stream()
                 .map(userMapper::toResponseDto)
-                .toList();
+                .collect(Collectors.toList());
     }
 
+    //Статистика
     @Override
     public long getAllDeadUsersCount() {
         return userRepository.countByDeathDateIsNotNull();
@@ -122,18 +123,21 @@ public class UserServiceImpl implements UserService {
         return userRepository.countByDeathDateIsNull();
     }
 
+    //Работа с документами
     @Override
     public List<UserResponseDto> getUsersWithExpiredDocuments() {
-        return userRepository.findAllByExpiryDateBefore(LocalDate.now()).stream()
+        return userRepository.findAllByExpiryDateBefore(LocalDate.now())
+                .stream()
                 .map(userMapper::toResponseDto)
-                .toList();
+                .collect(Collectors.toList());
     }
 
     @Override
     public List<UserResponseDto> getUsersWithDocumentsExpiringBetween(LocalDate start, LocalDate end) {
-        return userRepository.findAllByExpiryDateBetween(start, end).stream()
+        return userRepository.findAllByExpiryDateBetween(start, end)
+                .stream()
                 .map(userMapper::toResponseDto)
-                .toList();
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -141,20 +145,21 @@ public class UserServiceImpl implements UserService {
         return userRepository.findAllByDocumentType(documentType)
                 .stream()
                 .map(userMapper::toResponseDto)
-                .toList();
+                .collect(Collectors.toList());
     }
 
     @Override
     public List<UserResponseDto> getUsersByDocumentType(org.w3c.dom.DocumentType documentType) {
-        // Конвертация системного типа в ваш Enum по имени
         DocumentType type = DocumentType.valueOf(documentType.toString());
         return getUsersByDocumentType(type);
     }
 
+    //Сложные запросы
     @Override
     public List<UserResponseDto> getAliveUsersWithExpiredDocuments() {
-        return userRepository.findAllByDeathDateIsNullAndExpiryDateBefore(LocalDate.now()).stream()
+        return userRepository.findAllByDeathDateIsNullAndExpiryDateBefore(LocalDate.now())
+                .stream()
                 .map(userMapper::toResponseDto)
-                .toList();
+                .collect(Collectors.toList());
     }
 }
