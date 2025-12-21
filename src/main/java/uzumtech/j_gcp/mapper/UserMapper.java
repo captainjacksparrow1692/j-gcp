@@ -1,6 +1,7 @@
 package uzumtech.j_gcp.mapper;
 
 import org.springframework.stereotype.Component;
+import uzumtech.j_gcp.constant.LifeStatus;
 import uzumtech.j_gcp.dto.request.UserRequestDto;
 import uzumtech.j_gcp.dto.response.MarkDeadResponseDto;
 import uzumtech.j_gcp.dto.response.UserResponseDto;
@@ -61,8 +62,8 @@ public class UserMapper {
                 .userId(user.getId())
                 .pinfl(user.getPinfl())
                 .deathDate(user.getDeathDate())
-                // Если в DTO есть поле status, добавь его здесь:
-                // .status(user.getDeathDate() != null ? "DECEASED" : "ALIVE")
+                .status(user.getDeathDate() != null ? LifeStatus.DECEASED : LifeStatus.ALIVE)
+
                 .build();
     }
 }

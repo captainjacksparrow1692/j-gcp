@@ -1,6 +1,8 @@
 package uzumtech.j_gcp.dto.response;
 
 import lombok.*;
+import uzumtech.j_gcp.constant.LifeStatus;
+
 import java.time.LocalDate;
 
 @Data
@@ -15,5 +17,5 @@ public class MarkDeadResponseDto {
     //дата смерти
     private LocalDate deathDate;
     //статус операции
-    private String status;
+    private LifeStatus status;
 }
