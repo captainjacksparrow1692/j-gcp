@@ -8,6 +8,9 @@ import uzumtech.j_gcp.exception.UserAlreadyExistsException;
 import uzumtech.j_gcp.repository.UserRepository;
 import uzumtech.j_gcp.service.UserValidationService;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class UserValidationServiceImpl implements UserValidationService {
@@ -17,18 +20,26 @@ public class UserValidationServiceImpl implements UserValidationService {
     @Override
     @Transactional(readOnly = true)
     public void validateUniqueness(UserRequestDto requestDto) {
-        // Для обычного класса с @Getter используем get + имя поля
+        List<String> errors = new ArrayList<>();
 
-        if (userRepository.existsByPinfl(requestDto.getPinfl())) {
-            throw new UserAlreadyExistsException("Пользователь с ПИНФЛ %s уже существует".formatted(requestDto.getPinfl()));
+        String pinfl = requestDto.getPinfl();
+        String email = requestDto.getEmail();
+        String phone = requestDto.getPhoneNumber();
+
+        if (pinfl != null && userRepository.existsByPinfl(pinfl)) {
+            errors.add(String.format("Пользователь с ПИНФЛ %s уже существует", pinfl));
         }
 
-        if (userRepository.existsByEmail(requestDto.getEmail())) {
-            throw new UserAlreadyExistsException("Пользователь с email %s уже существует".formatted(requestDto.getEmail()));
+        if (email != null && userRepository.existsByEmail(email)) {
+            errors.add(String.format("Пользователь с email %s уже существует", email));
         }
 
-        if (userRepository.existsByPhoneNumber(requestDto.getPhoneNumber())) {
-            throw new UserAlreadyExistsException("Пользователь с номером телефона %s уже существует".formatted(requestDto.getPhoneNumber()));
+        if (phone != null && userRepository.existsByPhoneNumber(phone)) {
+            errors.add(String.format("Пользователь с номером телефона %s уже существует", phone));
+        }
+
+        if (!errors.isEmpty()) {
+            throw new UserAlreadyExistsException(String.join("; ", errors));
         }
     }
 }
