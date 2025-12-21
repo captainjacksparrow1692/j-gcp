@@ -22,7 +22,7 @@ public class UserController {
 
     private final UserService userService;
 
-    // ---------------- CRUD ----------------
+    //CRUD
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public UserResponseDto createUser(@RequestBody @Valid UserRequestDto userRequestDto) {
@@ -44,7 +44,7 @@ public class UserController {
         return userService.getUserByUserPinfl(pinfl);
     }
 
-    // ---------------- Поиск ----------------
+    //Поиск
     @GetMapping("/search")
     public Page<UserResponseDto> searchUsersByName(@RequestParam String fullName, Pageable pageable) {
         return userService.searchUsersByName(fullName, pageable);
@@ -60,7 +60,7 @@ public class UserController {
         return userService.getAllDeadUsers(pageable);
     }
 
-    // ---------------- Статус жизни ----------------
+    //Статус жизни
     @GetMapping("/{id}/alive")
     public boolean isUserAlive(@PathVariable Long id) {
         return userService.isUserAlive(id);
@@ -74,13 +74,13 @@ public class UserController {
         return userService.markUserAsDead(id, deathDate);
     }
 
-    // ---------------- Статистика ----------------
+    //Статистика
     @GetMapping("/count")
     public long getUsersCountByStatus(@RequestParam UserService.Status status) {
         return userService.getUsersCountByStatus(status);
     }
 
-    // ---------------- Документы ----------------
+    //Документы
     @GetMapping("/documents/expired")
     public Page<UserResponseDto> getUsersWithExpiredDocuments(Pageable pageable) {
         return userService.getUsersWithExpiredDocuments(pageable);
@@ -101,7 +101,7 @@ public class UserController {
         return userService.getUsersByDocumentType(type, pageable);
     }
 
-    // ---------------- Сложные запросы ----------------
+    //Сложные запросы
     @GetMapping("/alive/expired-documents")
     public Page<UserResponseDto> getAliveUsersWithExpiredDocuments(Pageable pageable) {
         return userService.getAliveUsersWithExpiredDocuments(pageable);
