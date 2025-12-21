@@ -1,19 +1,23 @@
 package uzumtech.j_gcp.dto.response;
 
 import lombok.Builder;
+import lombok.Getter;
+
 import java.time.LocalDateTime;
 
+@Getter
 @Builder
 public class ErrorResponse {
-    //Время возникновения ошибки
-    private LocalDateTime timestamp;
 
-    //Сообщение об ошибке
-    private String message;
+    // Время возникновения ошибки
+    private final LocalDateTime timestamp;
 
-    //Дополнительные детали ошибки
-    private String details;
+    // Сообщение об ошибке
+    private final String message;
 
-    //HTTP статус-код
-    private int statusCode;
+    // Дополнительные детали ошибки
+    private final String details;
+
+    // HTTP статус-код
+    private final int statusCode;
 }

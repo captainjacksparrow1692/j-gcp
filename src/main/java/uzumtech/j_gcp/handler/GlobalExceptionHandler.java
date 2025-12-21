@@ -2,8 +2,8 @@ package uzumtech.j_gcp.handler;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import uzumtech.j_gcp.dto.response.ErrorResponse;
 import uzumtech.j_gcp.exception.InvalidBusinessLogicException;
@@ -12,54 +12,56 @@ import uzumtech.j_gcp.exception.UserAlreadyExistsException;
 
 import java.time.LocalDateTime;
 
-@ControllerAdvice
+@RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    // Обработка ResourceNotFoundException (404)
+    // 404 NOT FOUND
     @ExceptionHandler(ResourceNotFoundException.class)
-    public ResponseEntity<ErrorResponse> handleResourceNotFound(ResourceNotFoundException ex, WebRequest request) {
-        ErrorResponse error = new ErrorResponse(
-                LocalDateTime.now(),
-                ex.getMessage(),
-                request.getDescription(false),
-                HttpStatus.NOT_FOUND.value()
-        );
-        return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
+    public ResponseEntity<ErrorResponse> handleResourceNotFound(
+            ResourceNotFoundException ex, WebRequest request) {
+
+        return buildError(ex.getMessage(), request, HttpStatus.NOT_FOUND);
     }
 
-    // Обработка конфликтов (409)
+    // 409 CONFLICT
     @ExceptionHandler(UserAlreadyExistsException.class)
-    public ResponseEntity<ErrorResponse> handleUserExists(UserAlreadyExistsException ex, WebRequest request) {
-        ErrorResponse error = new ErrorResponse(
-                LocalDateTime.now(),
-                ex.getMessage(),
-                request.getDescription(false),
-                HttpStatus.CONFLICT.value()
-        );
-        return new ResponseEntity<>(error, HttpStatus.CONFLICT);
+    public ResponseEntity<ErrorResponse> handleUserExists(
+            UserAlreadyExistsException ex, WebRequest request) {
+
+        return buildError(ex.getMessage(), request, HttpStatus.CONFLICT);
     }
 
-    // Обработка ошибок валидации и логики (400)
+    // 400 BAD REQUEST
     @ExceptionHandler(InvalidBusinessLogicException.class)
-    public ResponseEntity<ErrorResponse> handleBusinessLogic(InvalidBusinessLogicException ex, WebRequest request) {
-        ErrorResponse error = new ErrorResponse(
-                LocalDateTime.now(),
-                ex.getMessage(),
-                request.getDescription(false),
-                HttpStatus.BAD_REQUEST.value()
-        );
-        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+    public ResponseEntity<ErrorResponse> handleBusinessLogic(
+            InvalidBusinessLogicException ex, WebRequest request) {
+
+        return buildError(ex.getMessage(), request, HttpStatus.BAD_REQUEST);
     }
 
-    // Обработка всех остальных непредвиденных ошибок (500)
+    // 500 INTERNAL SERVER ERROR
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ErrorResponse> handleGlobalException(Exception ex, WebRequest request) {
-        ErrorResponse error = new ErrorResponse(
-                LocalDateTime.now(),
+    public ResponseEntity<ErrorResponse> handleGlobalException(
+            Exception ex, WebRequest request) {
+
+        return buildError(
                 "Internal Server Error",
-                ex.getMessage(),
-                HttpStatus.INTERNAL_SERVER_ERROR.value()
+                request,
+                HttpStatus.INTERNAL_SERVER_ERROR
         );
-        return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    // Общий метод построения ошибки
+    private ResponseEntity<ErrorResponse> buildError(
+            String message, WebRequest request, HttpStatus status) {
+
+        ErrorResponse error = ErrorResponse.builder()
+                .timestamp(LocalDateTime.now())
+                .message(message)
+                .details(request.getDescription(false))
+                .statusCode(status.value())
+                .build();
+
+        return new ResponseEntity<>(error, status);
     }
 }
