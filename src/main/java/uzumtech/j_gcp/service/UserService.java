@@ -45,8 +45,6 @@ public interface UserService {
 
     Page<UserResponseDto> getUsersByDocumentType(DocumentType documentType, Pageable pageable);
 
-    Page<UserResponseDto> getUsersBySystemDocumentType(org.w3c.dom.DocumentType documentType, Pageable pageable);
-
     // Сложные запросы
     Page<UserResponseDto> getAliveUsersWithExpiredDocuments(Pageable pageable);
 }

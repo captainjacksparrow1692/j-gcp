@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   db:
     image: postgres:16-alpine # Используем легкий и актуальный образ PostgreSQL
@@ -8,14 +6,14 @@ services:
     # Порт для доступа к базе данных
     # 5432 — стандартный порт PostgreSQL
     ports:
-      - "5431:5432"
+      - "5432:5432"
 
     environment:
       # --- Обязательные учетные данные и имя БД ---
       # Замените эти значения на ваши:
-      POSTGRES_DB: gcp         # Имя базы данных, которая будет создана
-      POSTGRES_USER: postgres           # Имя суперпользователя
-      POSTGRES_PASSWORD: 9376570167   # Пароль для суперпользователя
+      POSTGRES_DB: "mydatabase"         # Имя базы данных, которая будет создана
+      POSTGRES_USER: "myuser"           # Имя суперпользователя
+      POSTGRES_PASSWORD: "mypassword"   # Пароль для суперпользователя
 
       # Отключение ведения журнала (для тестовых сред)
       # PGDATA: /var/lib/postgresql/data/pgdata

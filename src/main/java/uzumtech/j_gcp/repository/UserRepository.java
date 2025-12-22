@@ -8,37 +8,40 @@ import uzumtech.j_gcp.constant.enums.DocumentType;
 import uzumtech.j_gcp.entity.User;
 
 import java.time.LocalDate;
-import java.util.List;
 import java.util.Optional;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
-    //поиск по пинфлу
+
+    // Поиск по пинфлу (пагинация обычно не нужна, так как это уникальное поле)
     Optional<User> findByPinfl(String pinfl);
 
-    //поиск пользователей по ФИО (без учёта регистра) с пагинацией
+    // Поиск по ФИО (уже было верно)
     Page<User> findAllByFullNameContainingIgnoreCase(String fullName, Pageable pageable);
 
-    //поиск всех живых пользователей (дата смерти отсутствует)
-    List<User> findAllByDeathDateIsNull();
+    // Поиск живых пользователей (ИЗМЕНЕНО на Page)
+    Page<User> findAllByDeathDateIsNull(Pageable pageable);
 
-    //поиск всех умерших пользователей
-    List<User> findAllByDeathDateIsNotNull();
+    // Поиск умерших пользователей (ИЗМЕНЕНО на Page)
+    Page<User> findAllByDeathDateIsNotNull(Pageable pageable);
 
-    // посчитать количество живых и не живых пользователей
+    // Подсчет (остается как есть)
     long countByDeathDateIsNull();
     long countByDeathDateIsNotNull();
 
-    //найти пользователей с истёкшим сроком действия документа
-    List<User> findAllByExpiryDateBefore(LocalDate date);
-    //найти пользователей с истёкающим сроком действия документа
-    List<User> findAllByExpiryDateBetween(LocalDate start, LocalDate end);
-    //найти живых пользователей с истёкшим сроком действия документа
-    List<User> findAllByDeathDateIsNullAndExpiryDateBefore(LocalDate date);
-    //найти пользователей по типу документа
-    List<User> findAllByDocumentType(DocumentType documentType);
+    // Истекшие документы (ИЗМЕНЕНО на Page)
+    Page<User> findAllByExpiryDateBefore(LocalDate date, Pageable pageable);
 
-    // Проверка существования для валидации уникальности
+    // Документы, истекающие в периоде (ИЗМЕНЕНО на Page)
+    Page<User> findAllByExpiryDateBetween(LocalDate start, LocalDate end, Pageable pageable);
+
+    // Живые с истекшими документами (ИЗМЕНЕНО на Page)
+    Page<User> findAllByDeathDateIsNullAndExpiryDateBefore(LocalDate date, Pageable pageable);
+
+    // По типу документа (ИЗМЕНЕНО на Page)
+    Page<User> findAllByDocumentType(DocumentType documentType, Pageable pageable);
+
+    // Проверки существования
     boolean existsByPinfl(String pinfl);
     boolean existsByEmail(String email);
     boolean existsByPhoneNumber(String phoneNumber);
