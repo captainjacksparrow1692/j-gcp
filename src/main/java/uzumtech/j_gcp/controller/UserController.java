@@ -7,6 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import uzumtech.j_gcp.constant.enums.DocumentType;
 import uzumtech.j_gcp.dto.request.MarkDeadRequestDto;
@@ -21,6 +22,7 @@ import java.time.LocalDate;
 @RestController
 @RequestMapping("/api/users")
 @RequiredArgsConstructor
+@Validated
 public class UserController {
 
     private final UserService userService;
