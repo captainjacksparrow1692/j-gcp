@@ -21,7 +21,7 @@ public class User {
     private Long id;
 
     //ФИО
-    @Column(nullable = false)
+    @Column(name = "full_name", nullable = false)
     private String fullName;
 
     //Адресс
@@ -33,7 +33,7 @@ public class User {
     private String email;
 
     //тел. номер(string потому что никаких операций не проводиться, просто храним номер)
-    @Column(nullable = false)
+    @Column(name = "phone_number", nullable = false)
     private String phoneNumber;
 
     //ссылка на фото
@@ -54,11 +54,11 @@ public class User {
     private DocumentType documentType;
 
     //дата выдачи
-    @Column(nullable = false)
+    @Column(name = "issue_date", nullable = false)
     private LocalDate issueDate;
 
     //срок истечения
-    @Column(nullable = false)
+    @Column(name = "expiry_date", nullable = false)
     private LocalDate expiryDate;
 
     //гражданство

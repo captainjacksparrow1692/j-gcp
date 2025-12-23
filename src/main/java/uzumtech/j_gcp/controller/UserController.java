@@ -1,7 +1,10 @@
 package uzumtech.j_gcp.controller;
 
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -30,8 +33,11 @@ public class UserController {
     }
 
     @GetMapping
-    public Page<UserResponseDto> getAllUsers(Pageable pageable) {
-        return userService.getAllUsers(pageable);
+    public Page<UserResponseDto> getAllUsers(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") @Min(1) @Max(100) int size) {
+
+        return userService.getAllUsers(PageRequest.of(page, size));
     }
 
     @GetMapping("/{id}")
@@ -51,13 +57,19 @@ public class UserController {
     }
 
     @GetMapping("/alive")
-    public Page<UserResponseDto> getAllAliveUsers(Pageable pageable) {
-        return userService.getAllAliveUsers(pageable);
+    public Page<UserResponseDto> getAllAliveUsers(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") @Min(1) @Max(100) int size) {
+
+        return userService.getAllAliveUsers(PageRequest.of(page, size));
     }
 
     @GetMapping("/dead")
-    public Page<UserResponseDto> getAllDeadUsers(Pageable pageable) {
-        return userService.getAllDeadUsers(pageable);
+    public Page<UserResponseDto> getAllDeadUsers(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") @Min(1) @Max(100) int size) {
+
+        return userService.getAllDeadUsers(PageRequest.of(page, size));
     }
 
     //Статус жизни
@@ -80,30 +92,36 @@ public class UserController {
         return userService.getUsersCountByStatus(status);
     }
 
-    //Документы
+    // Документы
     @GetMapping("/documents/expired")
-    public Page<UserResponseDto> getUsersWithExpiredDocuments(Pageable pageable) {
-        return userService.getUsersWithExpiredDocuments(pageable);
+    public Page<UserResponseDto> getUsersWithExpiredDocuments(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") @Min(1) @Max(100) int size) {
+        return userService.getUsersWithExpiredDocuments(PageRequest.of(page, size));
     }
 
     @GetMapping("/documents/expiring")
     public Page<UserResponseDto> getUsersWithDocumentsExpiringBetween(
             @RequestParam LocalDate start,
             @RequestParam LocalDate end,
-            Pageable pageable) {
-        return userService.getUsersWithDocumentsExpiringBetween(start, end, pageable);
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") @Min(1) @Max(100) int size) {
+        return userService.getUsersWithDocumentsExpiringBetween(start, end, PageRequest.of(page, size));
     }
 
     @GetMapping("/documents/type/{type}")
     public Page<UserResponseDto> getUsersByDocumentType(
             @PathVariable DocumentType type,
-            Pageable pageable) {
-        return userService.getUsersByDocumentType(type, pageable);
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") @Min(1) @Max(100) int size) {
+        return userService.getUsersByDocumentType(type, PageRequest.of(page, size));
     }
 
-    //Сложные запросы
+    // Сложные запросы
     @GetMapping("/alive/expired-documents")
-    public Page<UserResponseDto> getAliveUsersWithExpiredDocuments(Pageable pageable) {
-        return userService.getAliveUsersWithExpiredDocuments(pageable);
+    public Page<UserResponseDto> getAliveUsersWithExpiredDocuments(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") @Min(1) @Max(100) int size) {
+        return userService.getAliveUsersWithExpiredDocuments(PageRequest.of(page, size));
     }
 }

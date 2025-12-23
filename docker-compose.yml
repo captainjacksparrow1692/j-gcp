@@ -11,9 +11,9 @@ services:
     environment:
       # --- Обязательные учетные данные и имя БД ---
       # Замените эти значения на ваши:
-      POSTGRES_DB: "mydatabase"         # Имя базы данных, которая будет создана
-      POSTGRES_USER: "myuser"           # Имя суперпользователя
-      POSTGRES_PASSWORD: "mypassword"   # Пароль для суперпользователя
+      POSTGRES_DB: postgres         # Имя базы данных, которая будет создана
+      POSTGRES_USER: postgres           # Имя суперпользователя
+      POSTGRES_PASSWORD: 9376570167   # Пароль для суперпользователя
 
       # Отключение ведения журнала (для тестовых сред)
       # PGDATA: /var/lib/postgresql/data/pgdata

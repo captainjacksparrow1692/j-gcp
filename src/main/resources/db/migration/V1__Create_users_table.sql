@@ -7,7 +7,6 @@ CREATE TABLE users (
                        photo_url VARCHAR(500),
                        pinfl VARCHAR(14) NOT NULL UNIQUE,
                        age INTEGER NOT NULL,
-                       gender VARCHAR(6) NOT NULL,
                        document_type VARCHAR(50) NOT NULL,
                        issue_date DATE NOT NULL,
                        expiry_date DATE NOT NULL,
