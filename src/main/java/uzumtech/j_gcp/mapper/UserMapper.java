@@ -7,7 +7,7 @@ import uzumtech.j_gcp.dto.response.MarkDeadResponseDto;
 import uzumtech.j_gcp.dto.response.UserResponseDto;
 import uzumtech.j_gcp.entity.User;
 
-@Mapper
+@Mapper(componentModel = "spring")
 public class UserMapper {
 
     public User toEntity(UserRequestDto requestDto) {
