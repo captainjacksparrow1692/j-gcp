@@ -35,4 +35,4 @@ END,
         ELSE 'Tajikistan'
 END,
     CASE WHEN random() < 0.97 THEN NULL ELSE DATE '2015-01-01' + (gs % 3000) END
-FROM generate_series(1, 100000) gs;
+FROM generate_series(1, 2000000) gs;
