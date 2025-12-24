@@ -1,13 +1,13 @@
 package uzumtech.j_gcp.mapper;
 
-import org.springframework.stereotype.Component;
+import org.mapstruct.Mapper;
 import uzumtech.j_gcp.constant.enums.LifeStatus;
 import uzumtech.j_gcp.dto.request.UserRequestDto;
 import uzumtech.j_gcp.dto.response.MarkDeadResponseDto;
 import uzumtech.j_gcp.dto.response.UserResponseDto;
 import uzumtech.j_gcp.entity.User;
 
-@Component
+@Mapper
 public class UserMapper {
 
     public User toEntity(UserRequestDto requestDto) {
@@ -16,7 +16,7 @@ public class UserMapper {
         }
 
         return User.builder()
-                .fullName(requestDto.getFullName()) // ЭТОЙ СТРОЧКИ НЕ ХВАТАЛО
+                .fullName(requestDto.getFullName())
                 .address(requestDto.getAddress())
                 .pinfl(requestDto.getPinfl())
                 .phoneNumber(requestDto.getPhoneNumber())

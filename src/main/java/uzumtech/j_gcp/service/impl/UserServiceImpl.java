@@ -24,7 +24,6 @@ public class UserServiceImpl implements UserService {
 
     // CRUD
     @Override
-    @Transactional
     public UserResponseDto createUser(UserRequestDto dto) {
         if (userRepository.existsByPinfl(dto.getPinfl())) {
             throw new RuntimeException("User with this PINFL already exists");
