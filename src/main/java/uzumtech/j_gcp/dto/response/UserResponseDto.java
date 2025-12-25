@@ -2,6 +2,7 @@ package uzumtech.j_gcp.dto.response;
 
 import lombok.*;
 import uzumtech.j_gcp.constant.enums.DocumentType;
+import uzumtech.j_gcp.constant.enums.Gender;
 
 import java.time.LocalDate;
 
@@ -14,6 +15,8 @@ public class UserResponseDto {
     private Long id;
     //ФИО
     private String fullName;
+    //пол
+    private Gender gender;
     //адрес
     private String address;
     //почта
