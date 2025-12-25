@@ -37,7 +37,7 @@ public class UserController {
     @GetMapping
     public Page<UserResponseDto> getAllUsers(
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "20") @Min(1) @Max(100) int size) {
+            @RequestParam(defaultValue = "100") int size) {
 
         return userService.getAllUsers(PageRequest.of(page, size));
     }
@@ -61,7 +61,7 @@ public class UserController {
     @GetMapping("/alive")
     public Page<UserResponseDto> getAllAliveUsers(
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "20") @Min(1) @Max(100) int size) {
+            @RequestParam(defaultValue = "100") int size) {
 
         return userService.getAllAliveUsers(PageRequest.of(page, size));
     }
@@ -69,7 +69,7 @@ public class UserController {
     @GetMapping("/dead")
     public Page<UserResponseDto> getAllDeadUsers(
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "20") @Min(1) @Max(100) int size) {
+            @RequestParam(defaultValue = "100") int size) {
 
         return userService.getAllDeadUsers(PageRequest.of(page, size));
     }
@@ -98,7 +98,7 @@ public class UserController {
     @GetMapping("/documents/expired")
     public Page<UserResponseDto> getUsersWithExpiredDocuments(
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "20") @Min(1) @Max(100) int size) {
+            @RequestParam(defaultValue = "100") int size) {
         return userService.getUsersWithExpiredDocuments(PageRequest.of(page, size));
     }
 
@@ -107,7 +107,7 @@ public class UserController {
             @RequestParam LocalDate start,
             @RequestParam LocalDate end,
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "20") @Min(1) @Max(100) int size) {
+            @RequestParam(defaultValue = "20") int size) {
         return userService.getUsersWithDocumentsExpiringBetween(start, end, PageRequest.of(page, size));
     }
 
@@ -115,7 +115,7 @@ public class UserController {
     public Page<UserResponseDto> getUsersByDocumentType(
             @PathVariable DocumentType type,
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "20") @Min(1) @Max(100) int size) {
+            @RequestParam(defaultValue = "100") int size) {
         return userService.getUsersByDocumentType(type, PageRequest.of(page, size));
     }
 
@@ -123,7 +123,7 @@ public class UserController {
     @GetMapping("/alive/expired-documents")
     public Page<UserResponseDto> getAliveUsersWithExpiredDocuments(
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "20") @Min(1) @Max(100) int size) {
+            @RequestParam(defaultValue = "100") int size) {
         return userService.getAliveUsersWithExpiredDocuments(PageRequest.of(page, size));
     }
 }
