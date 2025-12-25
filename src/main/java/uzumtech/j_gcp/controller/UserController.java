@@ -107,7 +107,7 @@ public class UserController {
             @RequestParam LocalDate start,
             @RequestParam LocalDate end,
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "20") int size) {
+            @RequestParam(defaultValue = "100") int size) {
         return userService.getUsersWithDocumentsExpiringBetween(start, end, PageRequest.of(page, size));
     }
 
