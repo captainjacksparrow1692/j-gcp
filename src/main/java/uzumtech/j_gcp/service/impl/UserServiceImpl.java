@@ -10,53 +10,49 @@ import uzumtech.j_gcp.dto.request.UserRequestDto;
 import uzumtech.j_gcp.dto.response.MarkDeadResponseDto;
 import uzumtech.j_gcp.dto.response.UserResponseDto;
 import uzumtech.j_gcp.entity.User;
+import uzumtech.j_gcp.mapper.UserMapper;
 import uzumtech.j_gcp.repository.UserRepository;
 import uzumtech.j_gcp.service.UserService;
 
 import java.time.LocalDate;
 
 @Service
-@RequiredArgsConstructor
+@RequiredArgsConstructor // Генерирует конструктор для финальных полей (injection)
+@Transactional // По умолчанию все методы будут в транзакции
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
+    private final UserMapper userMapper; // Маппер теперь отдельный бин
+
     private static final String USER_NOT_FOUND = "User not found";
 
-    // CRUD
+    // --- CRUD ---
+
     @Override
     public UserResponseDto createUser(UserRequestDto dto) {
         if (userRepository.existsByPinfl(dto.getPinfl())) {
             throw new RuntimeException("User with this PINFL already exists");
         }
 
-        User user = new User();
-        user.setFullName(dto.getFullName());
-        user.setPinfl(dto.getPinfl());
-        user.setEmail(dto.getEmail());
-        user.setPhoneNumber(dto.getPhoneNumber());
-        user.setDocumentType(dto.getDocumentType());
-        user.setExpiryDate(dto.getExpiryDate());
-        user.setDeathDate(dto.getDeathDate());
-        user.setAddress(dto.getAddress());
-        user.setCitizenship(dto.getCitizenship());
-        user.setAge(dto.getAge());
-        user.setPhotoUrl(dto.getPhotoUrl());
-        user.setIssueDate(dto.getIssueDate());
+        // Маппинг одной строкой вместо 15 сеттеров
+        User user = userMapper.toEntity(dto);
+        User savedUser = userRepository.save(user);
 
-        return toDto(userRepository.save(user));
+        return userMapper.toResponseDto(savedUser);
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<UserResponseDto> getAllUsers(Pageable pageable) {
-        return userRepository.findAll(pageable).map(this::toDto);
+        return userRepository.findAll(pageable)
+                .map(userMapper::toResponseDto);
     }
 
     @Override
     @Transactional(readOnly = true)
     public UserResponseDto getUserById(Long id) {
         return userRepository.findById(id)
-                .map(this::toDto)
+                .map(userMapper::toResponseDto)
                 .orElseThrow(() -> new RuntimeException(USER_NOT_FOUND));
     }
 
@@ -64,11 +60,12 @@ public class UserServiceImpl implements UserService {
     @Transactional(readOnly = true)
     public UserResponseDto getUserByUserPinfl(String pinfl) {
         return userRepository.findByPinfl(pinfl)
-                .map(this::toDto)
+                .map(userMapper::toResponseDto)
                 .orElseThrow(() -> new RuntimeException(USER_NOT_FOUND));
     }
 
-    // Статус жизни
+    // --- СТАТУС ЖИЗНИ ---
+
     @Override
     @Transactional(readOnly = true)
     public boolean isUserAlive(Long id) {
@@ -78,44 +75,41 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    @Transactional
     public MarkDeadResponseDto markUserAsDead(Long id, LocalDate deathDate) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException(USER_NOT_FOUND));
 
         user.setDeathDate(deathDate);
-        userRepository.save(user);
+        // userRepository.save(user); // При @Transactional save() не обязателен (Dirty Checking)
 
-        return MarkDeadResponseDto.builder()
-                .userId(id)
-                .pinfl(user.getPinfl())
-                .deathDate(deathDate)
-                .build();
+        return userMapper.toMarkDeadResponseDto(user);
     }
 
-    // Поиск и фильтрация с правильной пагинацией на уровне БД
+    // --- ПОИСК И ФИЛЬТРАЦИЯ ---
+
     @Override
     @Transactional(readOnly = true)
     public Page<UserResponseDto> searchUsersByName(String fullName, Pageable pageable) {
         return userRepository.findAllByFullNameContainingIgnoreCase(fullName, pageable)
-                .map(this::toDto);
+                .map(userMapper::toResponseDto);
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<UserResponseDto> getAllAliveUsers(Pageable pageable) {
         return userRepository.findAllByDeathDateIsNull(pageable)
-                .map(this::toDto);
+                .map(userMapper::toResponseDto);
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<UserResponseDto> getAllDeadUsers(Pageable pageable) {
         return userRepository.findAllByDeathDateIsNotNull(pageable)
-                .map(this::toDto);
+                .map(userMapper::toResponseDto);
     }
 
-    // Статистика
+    // --- СТАТИСТИКА ---
+
     @Override
     @Transactional(readOnly = true)
     public long getUsersCountByStatus(Status status) {
@@ -124,48 +118,33 @@ public class UserServiceImpl implements UserService {
                 : userRepository.countByDeathDateIsNotNull();
     }
 
-    // Работа с документами
+    // --- РАБОТА С ДОКУМЕНТАМИ ---
+
     @Override
     @Transactional(readOnly = true)
     public Page<UserResponseDto> getUsersWithExpiredDocuments(Pageable pageable) {
         return userRepository.findAllByExpiryDateBefore(LocalDate.now(), pageable)
-                .map(this::toDto);
+                .map(userMapper::toResponseDto);
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<UserResponseDto> getUsersWithDocumentsExpiringBetween(LocalDate start, LocalDate end, Pageable pageable) {
         return userRepository.findAllByExpiryDateBetween(start, end, pageable)
-                .map(this::toDto);
+                .map(userMapper::toResponseDto);
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<UserResponseDto> getUsersByDocumentType(DocumentType documentType, Pageable pageable) {
         return userRepository.findAllByDocumentType(documentType, pageable)
-                .map(this::toDto);
+                .map(userMapper::toResponseDto);
     }
 
-    // Сложные запросы
     @Override
     @Transactional(readOnly = true)
     public Page<UserResponseDto> getAliveUsersWithExpiredDocuments(Pageable pageable) {
         return userRepository.findAllByDeathDateIsNullAndExpiryDateBefore(LocalDate.now(), pageable)
-                .map(this::toDto);
-    }
-
-    // Вспомогательный метод маппинга
-    private UserResponseDto toDto(User user) {
-        return UserResponseDto.builder()
-                .id(user.getId())
-                .fullName(user.getFullName())
-                .age(user.getAge())
-                .pinfl(user.getPinfl())
-                .email(user.getEmail())
-                .phoneNumber(user.getPhoneNumber())
-                .documentType(user.getDocumentType())
-                .expiryDate(user.getExpiryDate())
-                .deathDate(user.getDeathDate())
-                .build();
+                .map(userMapper::toResponseDto);
     }
 }
