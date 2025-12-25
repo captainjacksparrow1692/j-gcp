@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import uzumtech.j_gcp.constant.enums.DocumentType;
+import uzumtech.j_gcp.constant.enums.Gender;
 import uzumtech.j_gcp.entity.User;
 
 import java.time.LocalDate;
@@ -55,6 +56,16 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query("select u from User u where u.documentType = :documentType")
     Page<User> findAllByDocumentType(@Param("documentType")DocumentType documentType, Pageable pageable);
 
+    // Подсчет по полу
+    @Query("SELECT COUNT(u) FROM User u WHERE u.gender = :gender")
+    long countByGender(@Param("gender") Gender gender);
+
+    // Поиск и подсчет по гражданству
+    @Query("SELECT u FROM User u WHERE u.citizenship = :citizenship")
+    Page<User> findByCitizenship(@Param("citizenship") String citizenship, Pageable pageable);
+
+    @Query("SELECT COUNT(u) FROM User u WHERE u.citizenship = :citizenship")
+    long countByCitizenship(@Param("citizenship") String citizenship);
     // Проверки существования
     @Query("select count(u) > 0 from User u where u.pinfl = :pinfl")
     boolean existsByPinfl(@Param("pinfl")String pinfl);
