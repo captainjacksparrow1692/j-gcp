@@ -3,6 +3,7 @@ package uzumtech.j_gcp.dto.request;
 import jakarta.validation.constraints.*;
 import lombok.*;
 import uzumtech.j_gcp.constant.enums.DocumentType;
+import uzumtech.j_gcp.constant.enums.Gender;
 
 import java.time.LocalDate;
 
@@ -14,6 +15,9 @@ public class UserRequestDto {
     // ФИО пользователя
     @NotBlank(message = "Имя обязательно")
     private String fullName;
+
+    // Пол(MALE, FEMALE)
+    private Gender gender;
 
     // Адрес проживания
     @NotBlank(message = "Адрес обязателен")
