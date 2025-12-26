@@ -57,7 +57,7 @@ public class User {
     private LocalDate issueDate;
 
     //срок истечения
-    private LocalDate expiryDate;
+    private LocalDate expirationDate;
 
     //гражданство
     private String citizenship;

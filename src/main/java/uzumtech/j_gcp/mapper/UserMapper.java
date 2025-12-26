@@ -11,16 +11,18 @@ import uzumtech.j_gcp.entity.User;
 @Mapper(componentModel = "spring", imports = {LifeStatus.class})
 public interface UserMapper {
 
-    // 1. Создание сущности из Request DTO (как в примере с заказом)
+    // 1. Создание сущности из Request DTO
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "deathDate", source = "deathDate")
+    // Если в вашей сущности User поле называется expirationDate, раскомментируйте строку ниже:
+    // @Mapping(target = "expirationDate", source = "expiryDate")
     User toEntity(UserRequestDto requestDto);
 
     // 2. Основной маппинг в ответ (Entity -> ResponseDto)
+    // MapStruct автоматически сопоставит поля с одинаковыми именами
     UserResponseDto toResponseDto(User user);
 
     // 3. Маппинг для регистрации смерти (Entity -> MarkDeadResponseDto)
-    @Mapping(target = "userId", source = "id") // Маппим id из User в userId из DTO
+    @Mapping(target = "userId", source = "id")
     @Mapping(target = "status", expression = "java(user.getDeathDate() != null ? LifeStatus.DECEASED : LifeStatus.ALIVE)")
     MarkDeadResponseDto toMarkDeadResponseDto(User user);
 }
