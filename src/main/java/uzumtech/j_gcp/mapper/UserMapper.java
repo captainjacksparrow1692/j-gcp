@@ -11,14 +11,18 @@ import uzumtech.j_gcp.entity.User;
 @Mapper(componentModel = "spring", imports = {LifeStatus.class})
 public interface UserMapper {
 
-    // 1. Создание сущности из Request DTO
+
+    // 1. Создание сущности из Request DTO.
     @Mapping(target = "id", ignore = true)
     User toEntity(UserRequestDto requestDto);
 
-    // 2. Основной маппинг в ответ (Entity -> ResponseDto)
+
+    // 2. Основной маппинг в ответ (Entity -> UserResponseDto).
+    @Mapping(target = "photoUrl", source = "photoUrl")         // Исправляем возможный конфликт PhotoUrl/photoUrl
     UserResponseDto toResponseDto(User user);
 
-    // 3. Маппинг для регистрации смерти (Entity -> MarkDeadResponseDto)
+
+    // 3. Маппинг для регистрации смерти (Entity -> MarkDeadResponseDto).
     @Mapping(target = "userId", source = "id")
     @Mapping(target = "status", expression = "java(user.getDeathDate() != null ? LifeStatus.DECEASED : LifeStatus.ALIVE)")
     MarkDeadResponseDto toMarkDeadResponseDto(User user);
