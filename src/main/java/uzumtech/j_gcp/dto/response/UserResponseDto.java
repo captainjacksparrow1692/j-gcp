@@ -11,6 +11,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserResponseDto {
+    //переписать через record
     //id пользователя
     private Long id;
     //ФИО

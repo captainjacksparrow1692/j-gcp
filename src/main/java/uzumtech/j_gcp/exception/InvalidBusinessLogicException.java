@@ -5,3 +5,4 @@ public class InvalidBusinessLogicException extends RuntimeException {
         super(message);
     }
 }
+//дописать BusinesException

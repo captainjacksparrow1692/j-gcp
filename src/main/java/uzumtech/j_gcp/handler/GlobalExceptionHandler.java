@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
-
+    //сгруппировать все ошибки через бизнес ошибку, +системные ошибки(под кривые запросы), дописать ошибки
     // 404 NOT FOUND
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<ErrorResponse> handleResourceNotFound(

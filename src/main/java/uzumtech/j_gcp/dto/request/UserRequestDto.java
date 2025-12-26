@@ -12,6 +12,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserRequestDto {
+    //переписать через record
     // ФИО пользователя
     @NotBlank(message = "Имя обязательно")
     private String fullName;
