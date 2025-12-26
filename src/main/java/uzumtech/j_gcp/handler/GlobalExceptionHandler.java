@@ -6,9 +6,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import uzumtech.j_gcp.dto.response.ErrorResponse;
-import uzumtech.j_gcp.exception.InvalidBusinessLogicException;
-import uzumtech.j_gcp.exception.ResourceNotFoundException;
-import uzumtech.j_gcp.exception.UserAlreadyExistsException;
 
 import java.time.LocalDateTime;
 

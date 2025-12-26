@@ -2,9 +2,7 @@ package uzumtech.j_gcp.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import uzumtech.j_gcp.dto.request.UserRequestDto;
-import uzumtech.j_gcp.exception.UserAlreadyExistsException;
 import uzumtech.j_gcp.repository.UserRepository;
 import uzumtech.j_gcp.service.UserValidationService;
 
