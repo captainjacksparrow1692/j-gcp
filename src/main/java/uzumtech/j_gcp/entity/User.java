@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.*;
 import uzumtech.j_gcp.constant.enums.DocumentType;
 import uzumtech.j_gcp.constant.enums.Gender;
+import uzumtech.j_gcp.constant.enums.LifeStatus;
+import uzumtech.j_gcp.constant.enums.Status;
 
 import java.time.LocalDate;
 
@@ -35,7 +37,8 @@ public class User {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Gender gender;
-    //тел. номер(string потому что никаких операций не проводиться, просто храним номер)
+
+    //телефонный номер(string потому что никаких операций не проводиться, просто храним номер)
     @Column(name = "phone_number", nullable = false)
     private String phoneNumber;
 
@@ -64,4 +67,10 @@ public class User {
 
     //дата смерти
     private LocalDate deathDate;
+
+    @Enumerated(EnumType.STRING)
+    private Status status = Status.PENDING;
+
+    @Enumerated(EnumType.STRING)
+    private LifeStatus lifeStatus = LifeStatus.ALIVE;
 }
