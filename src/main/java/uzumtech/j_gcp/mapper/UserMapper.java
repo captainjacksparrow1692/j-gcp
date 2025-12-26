@@ -13,12 +13,9 @@ public interface UserMapper {
 
     // 1. Создание сущности из Request DTO
     @Mapping(target = "id", ignore = true)
-    // Если в вашей сущности User поле называется expirationDate, раскомментируйте строку ниже:
-    // @Mapping(target = "expirationDate", source = "expiryDate")
     User toEntity(UserRequestDto requestDto);
 
     // 2. Основной маппинг в ответ (Entity -> ResponseDto)
-    // MapStruct автоматически сопоставит поля с одинаковыми именами
     UserResponseDto toResponseDto(User user);
 
     // 3. Маппинг для регистрации смерти (Entity -> MarkDeadResponseDto)
