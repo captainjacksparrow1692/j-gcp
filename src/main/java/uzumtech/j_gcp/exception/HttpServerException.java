@@ -7,6 +7,6 @@ import static uzumtech.j_gcp.constant.enums.Error.INTERNAL_SERVICE_ERROR;
 
 public class HttpServerException extends BusinessException{
     public HttpServerException(String message, HttpStatus status) {
-        super(INTERNAL_SERVICE_ERROR.getCode(), message, ErrorType.INTERNAL, HttpStatus.valueOf(status.value()));
+        super(INTERNAL_SERVICE_ERROR.getCode(), message, ErrorType.EXTERNAL, HttpStatus.valueOf(status.value()));
     }
 }
