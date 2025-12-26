@@ -22,7 +22,7 @@ import java.time.LocalDate;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
-    private final UserMapper userMapper; // Маппер теперь отдельный бин
+    private final UserMapper userMapper;
 
     private static final String USER_NOT_FOUND = "User not found";
 
@@ -42,7 +42,6 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    @Transactional(readOnly = true)
     public Page<UserResponseDto> getAllUsers(Pageable pageable) {
         return userRepository.findAll(pageable)
                 .map(userMapper::toResponseDto);
@@ -80,7 +79,6 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new RuntimeException(USER_NOT_FOUND));
 
         user.setDeathDate(deathDate);
-        // userRepository.save(user); // При @Transactional save() не обязателен (Dirty Checking)
 
         return userMapper.toMarkDeadResponseDto(user);
     }
@@ -109,7 +107,7 @@ public class UserServiceImpl implements UserService {
     }
 
     // --- СТАТИСТИКА ---
-
+    //Сомнительный API с точки зрения бизнес логики
     @Override
     @Transactional(readOnly = true)
     public long getUsersCountByStatus(Status status) {

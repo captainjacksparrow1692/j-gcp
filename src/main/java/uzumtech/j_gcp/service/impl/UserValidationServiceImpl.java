@@ -18,7 +18,6 @@ public class UserValidationServiceImpl implements UserValidationService {
     private final UserRepository userRepository;
 
     @Override
-    @Transactional(readOnly = true)
     public void validateUniqueness(UserRequestDto requestDto) {
         List<String> errors = new ArrayList<>();
 

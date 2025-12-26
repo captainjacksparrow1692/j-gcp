@@ -1,7 +1,5 @@
 package uzumtech.j_gcp.controller;
 
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -54,6 +52,7 @@ public class UserController {
 
     //Поиск
     @GetMapping("/search")
+    //pageable переделка, пэйдж везьде должен быть одинаковым
     public Page<UserResponseDto> searchUsersByName(@RequestParam String fullName, Pageable pageable) {
         return userService.searchUsersByName(fullName, pageable);
     }
