@@ -9,13 +9,13 @@ import uzumtech.j_gcp.constant.enums.ErrorType;
 @Getter
 @ToString
 @FieldDefaults(level = lombok.AccessLevel.PRIVATE, makeFinal = true)
-public class BussinesException extends RuntimeException {
+public class BusinessException extends RuntimeException {
     int code;
     String message;
     HttpStatus httpStatus;
     ErrorType errorType;
 
-    public BussinesException(int code, String message, ErrorType errorType, HttpStatus status) {
+    public BusinessException(int code, String message, ErrorType errorType, HttpStatus status) {
         super(message);
         this.code = code;
         this.message = message;
