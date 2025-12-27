@@ -3,6 +3,7 @@ package uzumtech.j_gcp.service;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import uzumtech.j_gcp.constant.enums.DocumentType;
+import uzumtech.j_gcp.constant.enums.Gender;
 import uzumtech.j_gcp.dto.request.UserRequestDto;
 import uzumtech.j_gcp.dto.response.MarkDeadResponseDto;
 import uzumtech.j_gcp.dto.response.UserResponseDto;
@@ -18,6 +19,10 @@ public interface UserService {
     UserResponseDto getUserById(Long id);
 
     UserResponseDto getUserByUserPinfl(String pinfl);
+
+    UserResponseDto getUserByEmail(String email);
+
+    Page<UserResponseDto> getUserByCitizenship(String citizenship, Pageable pageable);
 
     //Статус жизни
     boolean isUserAlive(Long id);
@@ -35,6 +40,10 @@ public interface UserService {
     enum Status {
         ALIVE, DEAD
     }
+
+    long countUsersByCitizenship(String citizenship);
+
+    long countByGender(Gender gender);
 
     long getUsersCountByStatus(Status status);
 
