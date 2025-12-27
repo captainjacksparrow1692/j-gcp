@@ -1,64 +1,74 @@
 package uzumtech.j_gcp.handler;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import org.springframework.web.context.request.WebRequest;
+import uzumtech.j_gcp.constant.enums.Error;
+import uzumtech.j_gcp.constant.enums.ErrorType;
 import uzumtech.j_gcp.dto.response.ErrorResponse;
+import uzumtech.j_gcp.exception.BusinessException;
 
 import java.time.LocalDateTime;
+import java.util.stream.Collectors;
 
+@Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
-    //сгруппировать все ошибки через бизнес ошибку, +системные ошибки(под кривые запросы), дописать ошибки
-    // 404 NOT FOUND
-    @ExceptionHandler(ResourceNotFoundException.class)
-    public ResponseEntity<ErrorResponse> handleResourceNotFound(
-            ResourceNotFoundException ex, WebRequest request) {
 
-        return buildError(ex.getMessage(), request, HttpStatus.NOT_FOUND);
+    // 1. Кастомные бизнес-ошибки
+    @ExceptionHandler(BusinessException.class)
+    public ResponseEntity<ErrorResponse> handleBusiness(BusinessException ex) {
+        log.error("Business error: {}", ex.getMessage());
+        return buildResponse(ex.getHttpStatus(), ex.getCode(), ex.getMessage(), null, ex.getErrorType());
     }
 
-    // 409 CONFLICT
-    @ExceptionHandler(UserAlreadyExistsException.class)
-    public ResponseEntity<ErrorResponse> handleUserExists(
-            UserAlreadyExistsException ex, WebRequest request) {
+    // 2. Ошибки валидации (аннотации @Valid)
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ErrorResponse> handleValidation(MethodArgumentNotValidException ex) {
+        String details = ex.getBindingResult().getFieldErrors().stream()
+                .map(f -> f.getField() + ": " + f.getDefaultMessage())
+                .collect(Collectors.joining(", "));
 
-        return buildError(ex.getMessage(), request, HttpStatus.CONFLICT);
-    }
-
-    // 400 BAD REQUEST
-    @ExceptionHandler(InvalidBusinessLogicException.class)
-    public ResponseEntity<ErrorResponse> handleBusinessLogic(
-            InvalidBusinessLogicException ex, WebRequest request) {
-
-        return buildError(ex.getMessage(), request, HttpStatus.BAD_REQUEST);
-    }
-
-    // 500 INTERNAL SERVER ERROR
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<ErrorResponse> handleGlobalException(
-            Exception ex, WebRequest request) {
-
-        return buildError(
-                "Internal Server Error",
-                request,
-                HttpStatus.INTERNAL_SERVER_ERROR
+        return buildResponse(
+                HttpStatus.BAD_REQUEST,
+                Error.VALIDATION_FAILED.getCode(),
+                Error.VALIDATION_FAILED.getMessage(),
+                details,
+                ErrorType.VALIDATION
         );
     }
 
-    // Общий метод построения ошибки
-    private ResponseEntity<ErrorResponse> buildError(
-            String message, WebRequest request, HttpStatus status) {
+    // 3. Общий перехватчик (Safety Net)
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ErrorResponse> handleAll(Exception ex) {
+        log.error("Unexpected error: ", ex);
+        return buildResponse(
+                HttpStatus.INTERNAL_SERVER_ERROR,
+                Error.INTERNAL_SERVICE_ERROR.getCode(),
+                Error.INTERNAL_SERVICE_ERROR.getMessage(),
+                ex.getMessage(),
+                ErrorType.INTERNAL
+        );
+    }
 
-        ErrorResponse error = ErrorResponse.builder()
-                .timestamp(LocalDateTime.now())
-                .message(message)
-                .details(request.getDescription(false))
-                .statusCode(status.value())
-                .build();
+    private ResponseEntity<ErrorResponse> buildResponse(
+            HttpStatus status,
+            int code,
+            String message,
+            String details,
+            ErrorType type) {
 
-        return new ResponseEntity<>(error, status);
+        return ResponseEntity.status(status).body(
+                ErrorResponse.builder()
+                        .timestamp(LocalDateTime.now())
+                        .statusCode(code)
+                        .message(message)
+                        .details(details)
+                        .errorType(type)
+                        .build()
+        );
     }
 }
