@@ -20,7 +20,7 @@ import uzumtech.j_gcp.service.UserService;
 
 @Slf4j
 @RestController
-@RequestMapping("/api/v1/users") // Добавили версию API v1 (хорошая практика)
+@RequestMapping("/api/v1/users")
 @RequiredArgsConstructor
 @Validated
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
