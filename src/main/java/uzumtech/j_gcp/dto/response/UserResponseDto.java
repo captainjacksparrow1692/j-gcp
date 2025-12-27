@@ -15,7 +15,7 @@ public record UserResponseDto(
         Gender gender,
         String email,
         String address,
-        String PhotoUrl,
+        String photoUrl,
         DocumentType documentType,
         LocalDate issueDate,
         LocalDate expirationDate,
