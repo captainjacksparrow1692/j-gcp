@@ -19,9 +19,9 @@ public class UserValidationServiceImpl implements UserValidationService {
     public void validateUniqueness(UserRequestDto requestDto) {
         List<String> errors = new ArrayList<>();
 
-        String pinfl = requestDto.getPinfl();
-        String email = requestDto.getEmail();
-        String phone = requestDto.getPhoneNumber();
+        String pinfl = requestDto.pinfl();
+        String email = requestDto.email();
+        String phone = requestDto.phoneNumber();
 
         if (pinfl != null && userRepository.existsByPinfl(pinfl)) {
             errors.add(String.format("Пользователь с ПИНФЛ %s уже существует", pinfl));
@@ -33,10 +33,6 @@ public class UserValidationServiceImpl implements UserValidationService {
 
         if (phone != null && userRepository.existsByPhoneNumber(phone)) {
             errors.add(String.format("Пользователь с номером телефона %s уже существует", phone));
-        }
-
-        if (!errors.isEmpty()) {
-            throw new UserAlreadyExistsException(String.join("; ", errors));
         }
     }
 }
