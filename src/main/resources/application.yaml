@@ -1,37 +1,58 @@
 spring:
   application:
     name: j-gcp
-  datasource:
-    url: jdbc:postgresql://localhost:5432/postgres
-    username: postgres
-    password: 9376570167
-    hikari:
-      maximum-pool-size: 100 # Увеличено для высокой параллельности
-      minimum-idle: 20
-      connection-timeout: 30000
+
+  # Настройки Redis
   data:
+    redis:
+      host: ${REDIS_HOST:localhost} # Возьмет из переменной окружения или использует localhost
+      port: ${REDIS_PORT:6379}
+      timeout: 2000ms
+      lettuce:
+        pool:
+          max-active: 50 # Соразмерно твоим настройкам пула БД
+          max-idle: 10
+          min-idle: 2
     web:
       pageable:
         default-page-size: 50
-        max-page-size: 2000 # Позволяет тестировать тяжелые страницы
+        max-page-size: 2000
+
+  datasource:
+    url: jdbc:postgresql://${DB_HOST:localhost}:5432/postgres
+    username: postgres
+    password: ${DB_PASSWORD:9376570167}
+    hikari:
+      maximum-pool-size: 100
+      minimum-idle: 20
+      connection-timeout: 30000
+
   jpa:
     hibernate:
       ddl-auto: none
-    show-sql: false # Критично для скорости
+    show-sql: false
     properties:
       hibernate:
         jdbc.batch_size: 100
         order_inserts: true
-        generate_statistics: false # Выключено для экономии ресурсов CPU
+        generate_statistics: false
+
+  # Настройки кэширования (Redis будет использоваться как менеджер кэша)
+  cache:
+    type: redis
+    redis:
+      cache-null-values: false
+      time-to-live: 600000ms # TTL по умолчанию (например, 10 минут)
 
 server:
   port: 8080
   tomcat:
     threads:
-      max: 500 # Увеличено, чтобы обрабатывать 200+ VUs без очереди
+      max: 500
     max-connections: 10000
 
 logging:
   level:
     root: INFO
-    org.hibernate: ERROR # Выключаем лишний шум
+    org.hibernate: ERROR
+    org.springframework.data.redis: WARN # Чтобы не спамить в логах при каждом обращении
