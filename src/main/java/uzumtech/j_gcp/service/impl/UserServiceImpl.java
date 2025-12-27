@@ -1,10 +1,14 @@
 package uzumtech.j_gcp.service.impl;
 
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import uzumtech.j_gcp.component.GcpAdapter;
 import uzumtech.j_gcp.constant.enums.DocumentType;
 import uzumtech.j_gcp.dto.request.UserRequestDto;
 import uzumtech.j_gcp.dto.response.MarkDeadResponseDto;
@@ -16,15 +20,20 @@ import uzumtech.j_gcp.service.UserService;
 
 import java.time.LocalDate;
 
+import static uzumtech.j_gcp.constant.Constant.USER_NOT_FOUND;
+
+@Slf4j
 @Service
 @RequiredArgsConstructor // Генерирует конструктор для финальных полей (injection)
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class UserServiceImpl implements UserService {
 
-    private final UserRepository userRepository;
-    private final UserMapper userMapper;
-//
-//    // --- CRUD ---
-//
+    UserRepository userRepository;
+    UserMapper userMapper;
+    GcpAdapter gcpAdapter;
+
+    //CRUD
+
 //    @Override
 //    public UserResponseDto createUser(UserRequestDto dto) {
 //        if (userRepository.existsByPinfl(dto.getPinfl())) {
