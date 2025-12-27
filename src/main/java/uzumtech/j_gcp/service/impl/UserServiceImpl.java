@@ -133,13 +133,13 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Page<UserResponseDto> getUsersWithExpiredDocuments(Pageable pageable) {
-        return userRepository.findAllByExpiryDateBefore(LocalDate.now(), pageable)
+        return userRepository.findAllByExpirationDateBefore(LocalDate.now(), pageable)
                 .map(userMapper::toResponseDto);
     }
 
     @Override
     public Page<UserResponseDto> getUsersWithDocumentsExpiringBetween(LocalDate start, LocalDate end, Pageable pageable) {
-        return userRepository.findAllByExpiryDateBetween(start, end, pageable)
+        return userRepository.findAllByExpirationDateBetween(start, end, pageable)
                 .map(userMapper::toResponseDto);
     }
 
@@ -151,7 +151,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Page<UserResponseDto> getAliveUsersWithExpiredDocuments(Pageable pageable) {
-        return userRepository.findAllByDeathDateIsNullAndExpiryDateBefore(LocalDate.now(), pageable)
+        return userRepository.findAllByDeathDateIsNullAndExpirationDateBefore(LocalDate.now(), pageable)
                 .map(userMapper::toResponseDto);
     }
 }

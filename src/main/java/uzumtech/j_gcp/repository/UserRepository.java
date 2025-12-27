@@ -15,12 +15,10 @@ import java.util.Optional;
 public interface UserRepository extends JpaRepository<User, Long> {
 
     // Поиск по ПИНФЛ (возвращает Optional, так как поле уникальное)
-    @Query("select u from User u where u.pinfl = :pinfl")
     Optional<User> findByPinfl(String pinfl);
 
     // Поиск по Email
-    @Query("select u from User u where u.email = :email")
-    Optional<User> findByEmail(@Param("email") String email);
+    Optional<User> findByEmail(String email);
 
     // Поиск по ФИО с игнорированием регистра (Like search)
     @Query("select u from User u where lower(u.fullName) like lower(concat('%', :fullName, '%'))")
@@ -35,25 +33,22 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Page<User> findAllByDeathDateIsNotNull(Pageable pageable);
 
     // Подсчет (остается как есть)
-    @Query("select count(u) from User u where u.deathDate is null")
     long countByDeathDateIsNull();
-    @Query("select count(u) from User u where u.deathDate is not null")
     long countByDeathDateIsNotNull();
 
     // Истекшие документы (ИЗМЕНЕНО на Page)
     @Query("select u from User u where u.expirationDate < :date")
-     Page<User> findAllByExpiryDateBefore(@Param("date") LocalDate date, Pageable pageable);
+     Page<User> findAllByExpirationDateBefore(@Param("date") LocalDate date, Pageable pageable);
 
     // Документы, истекающие в периоде (ИЗМЕНЕНО на Page)
     @Query("select u from User u where u.expirationDate between :start and :end")
-    Page<User> findAllByExpiryDateBetween(@Param("start")LocalDate start,@Param("end") LocalDate end, Pageable pageable);
+    Page<User> findAllByExpirationDateBetween(@Param("start")LocalDate start,@Param("end") LocalDate end, Pageable pageable);
 
     // Живые с истекшими документами (ИЗМЕНЕНО на Page)
     @Query("select u from User u where u.deathDate is null and u.expirationDate < :date")
-    Page<User> findAllByDeathDateIsNullAndExpiryDateBefore(@Param("date")LocalDate date, Pageable pageable);
+    Page<User> findAllByDeathDateIsNullAndExpirationDateBefore(@Param("date")LocalDate date, Pageable pageable);
 
     // По типу документа (ИЗМЕНЕНО на Page)
-    @Query("select u from User u where u.documentType = :documentType")
     Page<User> findAllByDocumentType(@Param("documentType")DocumentType documentType, Pageable pageable);
 
     // Подсчет по полу
@@ -61,17 +56,12 @@ public interface UserRepository extends JpaRepository<User, Long> {
     long countByGender(@Param("gender") Gender gender);
 
     // Поиск и подсчет по гражданству
-    @Query("SELECT u FROM User u WHERE u.citizenship = :citizenship")
-    Page<User> findByCitizenship(@Param("citizenship") String citizenship, Pageable pageable);
+    Page<User> findByCitizenship(String citizenship, Pageable pageable);
 
-    @Query("SELECT COUNT(u) FROM User u WHERE u.citizenship = :citizenship")
-    long countByCitizenship(@Param("citizenship") String citizenship);
+    long countByCitizenship(String citizenship);
 
     // Проверки существования
-    @Query("select count(u) > 0 from User u where u.pinfl = :pinfl")
-    boolean existsByPinfl(@Param("pinfl")String pinfl);
-    @Query("select count(u) > 0 from User u where u.email = :email")
-    boolean existsByEmail(@Param("email")String email);
-    @Query("select count(u) > 0 from User u where u.phoneNumber = :phoneNumber")
-    boolean existsByPhoneNumber(@Param("phoneNumber")String phoneNumber);
+    boolean existsByPinfl(String pinfl);
+    boolean existsByEmail(String email);
+    boolean existsByPhoneNumber(String phoneNumber);
 }
