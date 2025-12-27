@@ -14,12 +14,13 @@ public interface UserMapper {
 
     // 1. Создание сущности из Request DTO.
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "status", ignore = true)
+    @Mapping(target = "lifeStatus",  ignore = true)
     User toEntity(UserRequestDto requestDto);
 
 
-    // 2. Основной маппинг в ответ (Entity -> UserResponseDto).
-    @Mapping(target = "photoUrl", ignore = true)
     UserResponseDto toResponseDto(User user);
+    // 2. Основной маппинг в ответ (Entity -> UserResponseDto).
 
 
     // 3. Маппинг для регистрации смерти (Entity -> MarkDeadResponseDto).
