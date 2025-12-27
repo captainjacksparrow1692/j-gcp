@@ -18,7 +18,7 @@ public interface UserMapper {
 
 
     // 2. Основной маппинг в ответ (Entity -> UserResponseDto).
-    @Mapping(target = "photoUrl", source = "photoUrl")         // Исправляем возможный конфликт PhotoUrl/photoUrl
+    @Mapping(target = "photoUrl", ignore = true)
     UserResponseDto toResponseDto(User user);
 
 
