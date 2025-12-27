@@ -23,7 +23,7 @@ public class RedisProps {
     int timeout;
     int shutdownTimeout;
 
-    int orderTtl;
-    int merchantTtl;
+    int gcpTtl;
+    int userTtl;
 }
 //взято из delivery
