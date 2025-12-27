@@ -41,15 +41,15 @@ public interface UserRepository extends JpaRepository<User, Long> {
     long countByDeathDateIsNotNull();
 
     // Истекшие документы (ИЗМЕНЕНО на Page)
-    @Query("select u from User u where u.expiryDate < :date")
+    @Query("select u from User u where u.expirationDate < :date")
      Page<User> findAllByExpiryDateBefore(@Param("date") LocalDate date, Pageable pageable);
 
     // Документы, истекающие в периоде (ИЗМЕНЕНО на Page)
-    @Query("select u from User u where u.expiryDate between :start and :end")
+    @Query("select u from User u where u.expirationDate between :start and :end")
     Page<User> findAllByExpiryDateBetween(@Param("start")LocalDate start,@Param("end") LocalDate end, Pageable pageable);
 
     // Живые с истекшими документами (ИЗМЕНЕНО на Page)
-    @Query("select u from User u where u.deathDate is null and u.expiryDate < :date")
+    @Query("select u from User u where u.deathDate is null and u.expirationDate < :date")
     Page<User> findAllByDeathDateIsNullAndExpiryDateBefore(@Param("date")LocalDate date, Pageable pageable);
 
     // По типу документа (ИЗМЕНЕНО на Page)
@@ -66,6 +66,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     @Query("SELECT COUNT(u) FROM User u WHERE u.citizenship = :citizenship")
     long countByCitizenship(@Param("citizenship") String citizenship);
+
     // Проверки существования
     @Query("select count(u) > 0 from User u where u.pinfl = :pinfl")
     boolean existsByPinfl(@Param("pinfl")String pinfl);

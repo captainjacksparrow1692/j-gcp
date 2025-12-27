@@ -36,16 +36,17 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public UserResponseDto createUser(UserRequestDto userRequestDto) {
-        log.info("Creating user with PINFL: {}", userRequestDto.getPinfl());
+        log.info("Creating user with PINFL: {}",
+                userRequestDto.pinfl());
         var entity = userMapper.toEntity(userRequestDto);
         var savedUser = userRepository.save(entity);
-        return userMapper.toDto(savedUser);
+        return userMapper.toResponseDto(savedUser);
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<UserResponseDto> getAllUsers(Pageable pageable) {
-        return userRepository.findAll(pageable).map(userMapper::toDto);
+        return userRepository.findAll(pageable).map(userMapper::toResponseDto);
     }
 
     @Override
@@ -53,7 +54,7 @@ public class UserServiceImpl implements UserService {
     @Transactional(readOnly = true)
     public UserResponseDto getUserById(Long id) {
         return userRepository.findById(id)
-                .map(userMapper::toDto)
+                .map(userMapper::toResponseDto)
                 .orElseThrow(() -> new UserNotFoundException(id.toString()));
     }
 
@@ -61,7 +62,7 @@ public class UserServiceImpl implements UserService {
     @Transactional(readOnly = true)
     public UserResponseDto getUserByUserPinfl(String pinfl) {
         return userRepository.findByPinfl(pinfl)
-                .map(userMapper::toDto)
+                .map(userMapper::toResponseDto)
                 .orElseThrow(() -> new UserNotFoundException(pinfl));
     }
 
