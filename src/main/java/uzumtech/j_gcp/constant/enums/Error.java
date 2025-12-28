@@ -2,6 +2,7 @@ package uzumtech.j_gcp.constant.enums;
 
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 
 import java.util.Arrays;
 
@@ -45,7 +46,7 @@ public enum Error {
 
     private final int code;
     private final String message;
-    private final HttpStatus httpStatus;
+    private final HttpStatusCode httpStatus;
 
     Error(int code, String message, HttpStatus httpStatus) {
         this.code = code;
