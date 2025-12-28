@@ -4,10 +4,14 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import uzumtech.j_gcp.constant.Constant;
 import uzumtech.j_gcp.constant.enums.DocumentType;
 import uzumtech.j_gcp.constant.enums.Gender;
 import uzumtech.j_gcp.constant.enums.LifeStatus;
@@ -29,29 +33,56 @@ public class UserServiceImpl implements UserService {
 
     UserRepository userRepository;
     UserMapper userMapper;
+    KafkaTemplate<String, UserResponseDto> userTopicTemplate;
 
     @Override
     @Transactional
+    @CacheEvict(value = Constant.USER_CACHE, allEntries = true)
     public UserResponseDto createUser(UserRequestDto userRequestDto) {
         log.info("Creating user with PINFL: {}", userRequestDto.pinfl());
+
         if (userRepository.existsByPinfl(userRequestDto.pinfl())) {
             throw new IllegalArgumentException("User with this PINFL already exists");
         }
+
         var entity = userMapper.toEntity(userRequestDto);
         var saved = userRepository.save(entity);
-        return userMapper.toResponseDto(saved);
+        var response = userMapper.toResponseDto(saved);
+
+        try {
+            userTopicTemplate.send(Constant.USER_TOPIC, response.pinfl(), response);
+        } catch (Exception e) {
+            log.error("Kafka error: {}", e.getMessage());
+        }
+
+        return response;
+    }
+
+    @Override
+    @Transactional
+    @CacheEvict(value = Constant.USER_CACHE, key = "#id")
+    public MarkDeadResponseDto markUserAsDead(Long id, LocalDate deathDate) {
+        var user = userRepository.findById(id)
+                .orElseThrow(() -> new NoSuchElementException(Constant.USER_NOT_FOUND + id));
+
+        user.setLifeStatus(LifeStatus.DECEASED);
+        user.setDeathDate(deathDate);
+
+        var updated = userRepository.save(user);
+        return userMapper.toMarkDeadResponseDto(updated);
+    }
+
+    @Override
+    @Cacheable(value = Constant.USER_CACHE, key = "#id")
+    public UserResponseDto getUserById(Long id) {
+        return userRepository.findById(id)
+                .map(userMapper::toResponseDto)
+                .orElseThrow(() -> new NoSuchElementException(Constant.USER_NOT_FOUND + id));
     }
 
     @Override
     public Page<UserResponseDto> getAllUsers(Pageable pageable) {
         return userRepository.findAll(pageable).map(userMapper::toResponseDto);
-    }
-
-    @Override
-    public UserResponseDto getUserById(Long id) {
-        var user = userRepository.findById(id)
-                .orElseThrow(() -> new NoSuchElementException("User not found with id: " + id));
-        return userMapper.toResponseDto(user);
     }
 
     @Override
@@ -70,28 +101,14 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Page<UserResponseDto> getUserByCitizenship(String citizenship, Pageable pageable){
-        return userRepository.findByCitizenship(citizenship, pageable)
-                .map(userMapper::toResponseDto);
+        return userRepository.findByCitizenship(citizenship, pageable).map(userMapper::toResponseDto);
     }
 
     @Override
     public boolean isUserAlive(Long id) {
-        var user = userRepository.findById(id)
-                .orElseThrow(() -> new NoSuchElementException("User not found"));
-        return user.getLifeStatus() == LifeStatus.ALIVE;
-    }
-
-    @Override
-    @Transactional
-    public MarkDeadResponseDto markUserAsDead(Long id, LocalDate deathDate) {
-        var user = userRepository.findById(id)
-                .orElseThrow(() -> new NoSuchElementException("User not found"));
-
-        user.setLifeStatus(LifeStatus.DECEASED);
-        user.setDeathDate(deathDate);
-
-        var updated = userRepository.save(user);
-        return userMapper.toMarkDeadResponseDto(updated);
+        return userRepository.findById(id)
+                .map(u -> u.getLifeStatus() == LifeStatus.ALIVE)
+                .orElseThrow(() -> new NoSuchElementException(Constant.USER_NOT_FOUND + id));
     }
 
     @Override
@@ -102,25 +119,21 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Page<UserResponseDto> getAllAliveUsers(Pageable pageable) {
-        return userRepository.findAllByDeathDateIsNull(pageable)
-                .map(userMapper::toResponseDto);
+        return userRepository.findAllByDeathDateIsNull(pageable).map(userMapper::toResponseDto);
     }
 
     @Override
     public Page<UserResponseDto> getAllDeadUsers(Pageable pageable) {
-        return userRepository.findAllByDeathDateIsNotNull(pageable)
-                .map(userMapper::toResponseDto);
+        return userRepository.findAllByDeathDateIsNotNull(pageable).map(userMapper::toResponseDto);
     }
 
     @Override
     public long countUsersByCitizenship(String citizenship) {
-        log.debug("Counting users for citizenship: {}", citizenship);
         return userRepository.countByCitizenship(citizenship);
     }
 
     @Override
     public long countByGender(Gender gender){
-        log.debug("Counting users for gender: {}", gender);
         return userRepository.countByGender(gender);
     }
 
