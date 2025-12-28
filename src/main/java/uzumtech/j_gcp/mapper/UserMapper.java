@@ -13,7 +13,6 @@ public interface UserMapper {
 
     // 1. Создание сущности из Request DTO.
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "expirationDate", ignore = true)
     @Mapping(target = "status", ignore = true)
     @Mapping(target = "lifeStatus", ignore = true)
     @Mapping(target = "deathDate", ignore = true)
