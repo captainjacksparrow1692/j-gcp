@@ -51,7 +51,7 @@ public record UserRequestDto(
 
         @JsonFormat(pattern = "yyyy-MM-dd")
         @Future(message = "Срок действия документа должен быть в будущем")
-        LocalDate expiryDate,
+        LocalDate expirationDate,
 
         @NotBlank(message = "Гражданство обязательно")
         String citizenship,
