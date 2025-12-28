@@ -21,6 +21,7 @@ import uzumtech.j_gcp.dto.response.UserResponseDto;
 import uzumtech.j_gcp.mapper.UserMapper;
 import uzumtech.j_gcp.repository.UserRepository;
 import uzumtech.j_gcp.service.UserService;
+import uzumtech.j_gcp.service.UserValidationService;
 
 import java.time.LocalDate;
 import java.util.NoSuchElementException;
@@ -33,17 +34,16 @@ public class UserServiceImpl implements UserService {
 
     UserRepository userRepository;
     UserMapper userMapper;
+    UserValidationService userValidationService; // Добавили сервис валидации
     KafkaTemplate<String, UserResponseDto> userTopicTemplate;
 
     @Override
     @Transactional
     @CacheEvict(value = Constant.USER_CACHE, allEntries = true)
     public UserResponseDto createUser(UserRequestDto userRequestDto) {
-        log.info("Creating user with PINFL: {}", userRequestDto.pinfl());
+        log.info("Attempting to create user: {}", userRequestDto.pinfl());
 
-        if (userRepository.existsByPinfl(userRequestDto.pinfl())) {
-            throw new IllegalArgumentException("User with this PINFL already exists");
-        }
+        userValidationService.validateUniqueness(userRequestDto);
 
         var entity = userMapper.toEntity(userRequestDto);
         var saved = userRepository.save(entity);
@@ -52,7 +52,7 @@ public class UserServiceImpl implements UserService {
         try {
             userTopicTemplate.send(Constant.USER_TOPIC, response.pinfl(), response);
         } catch (Exception e) {
-            log.error("Kafka error: {}", e.getMessage());
+            log.error("Kafka delivery failed: {}", e.getMessage());
         }
 
         return response;
@@ -69,12 +69,14 @@ public class UserServiceImpl implements UserService {
         user.setDeathDate(deathDate);
 
         var updated = userRepository.save(user);
+        log.info("User {} marked as dead on {}", id, deathDate);
         return userMapper.toMarkDeadResponseDto(updated);
     }
 
     @Override
     @Cacheable(value = Constant.USER_CACHE, key = "#id")
     public UserResponseDto getUserById(Long id) {
+        log.debug("Fetching user {} from database", id);
         return userRepository.findById(id)
                 .map(userMapper::toResponseDto)
                 .orElseThrow(() -> new NoSuchElementException(Constant.USER_NOT_FOUND + id));
@@ -93,14 +95,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserResponseDto getUserByEmail(String email){
+    public UserResponseDto getUserByEmail(String email) {
         return userRepository.findByEmail(email)
                 .map(userMapper::toResponseDto)
                 .orElseThrow(() -> new NoSuchElementException("User not found with email: " + email));
     }
 
     @Override
-    public Page<UserResponseDto> getUserByCitizenship(String citizenship, Pageable pageable){
+    public Page<UserResponseDto> getUserByCitizenship(String citizenship, Pageable pageable) {
         return userRepository.findByCitizenship(citizenship, pageable).map(userMapper::toResponseDto);
     }
 
@@ -133,7 +135,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public long countByGender(Gender gender){
+    public long countByGender(Gender gender) {
         return userRepository.countByGender(gender);
     }
 
@@ -151,8 +153,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Page<UserResponseDto> getUsersWithDocumentsExpiringBetween(LocalDate start, LocalDate end, Pageable pageable) {
-        return userRepository.findAllByExpirationDateBetween(start, end, pageable)
+    public Page<UserResponseDto> getAliveUsersWithExpiredDocuments(Pageable pageable) {
+        return userRepository.findAllByDeathDateIsNullAndExpirationDateBefore(LocalDate.now(), pageable)
                 .map(userMapper::toResponseDto);
     }
 
@@ -163,8 +165,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Page<UserResponseDto> getAliveUsersWithExpiredDocuments(Pageable pageable) {
-        return userRepository.findAllByDeathDateIsNullAndExpirationDateBefore(LocalDate.now(), pageable)
+    public Page<UserResponseDto> getUsersWithDocumentsExpiringBetween(LocalDate start, LocalDate end, Pageable pageable) {
+        return userRepository.findAllByExpirationDateBetween(start, end, pageable)
                 .map(userMapper::toResponseDto);
     }
 }
