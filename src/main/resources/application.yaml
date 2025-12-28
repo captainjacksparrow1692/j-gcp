@@ -1,58 +1,94 @@
+# Project configuration
 spring:
   application:
-    name: j-gcp
+    name: j_gcp
 
-  # Настройки Redis
-  data:
-    redis:
-      host: ${REDIS_HOST:localhost} # Возьмет из переменной окружения или использует localhost
-      port: ${REDIS_PORT:6379}
-      timeout: 2000ms
-      lettuce:
-        pool:
-          max-active: 50 # Соразмерно твоим настройкам пула БД
-          max-idle: 10
-          min-idle: 2
-    web:
-      pageable:
-        default-page-size: 50
-        max-page-size: 2000
 
+
+  # DB configuration
   datasource:
-    url: jdbc:postgresql://${DB_HOST:localhost}:5432/postgres
+    url: jdbc:postgresql://localhost:5432/postgres
     username: postgres
-    password: ${DB_PASSWORD:9376570167}
-    hikari:
-      maximum-pool-size: 100
-      minimum-idle: 20
-      connection-timeout: 30000
+    password: 9376570167
+    driver-class-name: org.postgresql.Driver
+    tomcat:
+      test-on-borrow: true
+      validation-query: SELECT 1
 
   jpa:
     hibernate:
-      ddl-auto: none
-    show-sql: false
+      ddl-auto: validate
+    open-in-view: false
+    show-sql: ${SHOW_SQL:true}
     properties:
       hibernate:
-        jdbc.batch_size: 100
+        jdbc:
+          batch_size: 10
+        order_updates: true
         order_inserts: true
-        generate_statistics: false
+        format_sql: true
+        generate_statistics: true
+        default_schema: postgres
 
-  # Настройки кэширования (Redis будет использоваться как менеджер кэша)
+
+
+  # Flyway configuration
+  flyway:
+    baseline-on-migrate: true
+    enabled: true
+    validate-on-migrate: true
+    baseline-version: 0
+    schemas: postgres
+
+
+
+  # Redis configuration
   cache:
     type: redis
+  data:
     redis:
-      cache-null-values: false
-      time-to-live: 600000ms # TTL по умолчанию (например, 10 минут)
+      host: ${REDIS_HOST:0.0.0.0}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD:secure_redis_pass}
+      lettuce:
+        pool:
+          max-active: ${REDIS_POOL_LETTUCE_MAX_ACTIVE:32}
+          max-idle: ${REDIS_POOL_LETTUCE_MAX_IDLE:16}
+          min-idle: ${REDIS_POOL_LETTUCE_MIN_IDLE:8}
+          max-wait: ${REDIS_POOL_LETTUCE_MAX_WAIT:2000}
+      database: 0
+      timeout: ${REDIS_CONNECT_TIMEOUT:2000}
+      default-ttl: ${REDIS_DEFAULT_TTL:30000}
+      gcp-ttl: ${REDIS_ORDER_TTL:5000}
+      user-ttl: ${REDIS_MERCHANT_TTL:5000}
 
+
+
+# Tomcat configuration (milliseconds)
 server:
-  port: 8080
+  port: ${SERVER_PORT:8080}
   tomcat:
+    accept-count: ${TOMCAT_ACCEPT_COUNT:100}
+    max-connections: ${TOMCAT_MAX_CONNECTIONS:1000}
     threads:
-      max: 500
-    max-connections: 10000
+      max: ${TOMCAT_MAX_THREADS:200}
+      min-spare: ${TOMCAT_MIN_SPARE_THREADS:20}
+  compression:
+    enabled: true
+    min-response-size: 2KB
+    mime-types: application/json, application/xml, text/xml, text/plain
 
-logging:
-  level:
-    root: INFO
-    org.hibernate: ERROR
-    org.springframework.data.redis: WARN # Чтобы не спамить в логах при каждом обращении
+
+
+# Kafka
+kafka:
+  bootstrapServers: ${KAFKA_BOOTSTRAP_SERVERS}
+  groupId: ${KAFKA_CARD_GROUP_ID}
+  clientId: ${KAFKA_CARD_CLIENT_ID}
+  acksConfig: ${KAFKA_ACKS_CONFIG}
+  retriesConfig: ${KAFKA_RETRIES_CONFIG:3}
+  lingerMsConfig: ${KAFKA_LINGER_MS_CONFIG:100}
+  clientDnsLookup: ${KAFKA_CLIENT_DNS_LOOKUP}
+  batchSizeConfig: ${KAFKA_BATCH_SIZE_CONFIG:16384}
+  bufferMemoryConfig: ${KAFKA_BUFFER_MEMORY_CONFIG:32768}
+  autoOffsetResetConfig: ${KAFKA_AUTO_OFFSET_RESET_CONFIG}
