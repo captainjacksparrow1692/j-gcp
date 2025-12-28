@@ -1,6 +1,8 @@
 package uzumtech.j_gcp.service.impl;
 
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
 import uzumtech.j_gcp.dto.request.UserRequestDto;
 import uzumtech.j_gcp.repository.UserRepository;
@@ -11,9 +13,10 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class UserValidationServiceImpl implements UserValidationService {
 
-    private final UserRepository userRepository;
+    UserRepository userRepository;
 
     @Override
     public void validateUniqueness(UserRequestDto requestDto) {
@@ -33,6 +36,10 @@ public class UserValidationServiceImpl implements UserValidationService {
 
         if (phone != null && userRepository.existsByPhoneNumber(phone)) {
             errors.add(String.format("Пользователь с номером телефона %s уже существует", phone));
+        }
+
+        if (!errors.isEmpty()) {
+            throw new IllegalArgumentException(String.join("; ", errors));
         }
     }
 }
