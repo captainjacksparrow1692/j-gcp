@@ -13,6 +13,8 @@ CREATE TABLE users (
                        expiration_date DATE NOT NULL,
                        citizenship VARCHAR(100) NOT NULL,
                        death_date DATE,
+                       life_status VARCHAR(50) NOT NULL,
+                       status VARCHAR(50) NOT NULL,
                        CONSTRAINT chk_age CHECK (age >= 0 AND age <= 150),
                        CONSTRAINT chk_pinfl_digits_and_length CHECK (pinfl ~ '^[0-9]{14}$')
     );
