@@ -1,10 +1,12 @@
 package uzumtech.j_gcp.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 import uzumtech.j_gcp.constant.enums.DocumentType;
 import uzumtech.j_gcp.constant.enums.Gender;
 import java.time.LocalDate;
 
+@JsonFormat(pattern = "yyyy-MM-dd")
 @Builder
 public record UserResponseDto(
         Long id,
