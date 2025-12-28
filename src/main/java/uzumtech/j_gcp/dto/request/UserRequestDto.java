@@ -33,7 +33,7 @@ public record UserRequestDto(
         @NotBlank(message = "Photo_URL обязателен")
         String photoUrl,
 
-        @NotBlank(message = "Возраст обязателен")
+        @NotNull(message = "Возраст обязателен")
         @Min(value = 0, message = "Возраст не может быть отрицательным")
         @Max(value = 150, message = "Возраст не может быть больше 150")
         Integer age,
