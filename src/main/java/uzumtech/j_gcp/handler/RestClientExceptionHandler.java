@@ -4,7 +4,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.ResponseErrorHandler;
-import uzumtech.j_gcp.exception.HttpClientException;
 import uzumtech.j_gcp.exception.HttpServerException;
 
 import java.io.IOException;

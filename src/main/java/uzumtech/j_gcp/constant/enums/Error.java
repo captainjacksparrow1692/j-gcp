@@ -3,6 +3,8 @@ package uzumtech.j_gcp.constant.enums;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
+import java.util.Arrays;
+
 @Getter
 public enum Error {
     // 1xxx: System & Protocol Errors
@@ -38,7 +40,8 @@ public enum Error {
     DATABASE_CONNECTION_ERROR(5000, "Ошибка связи с PostgreSQL", HttpStatus.SERVICE_UNAVAILABLE),
     REDIS_CONNECTION_ERROR(5001, "Кэш недоступен", HttpStatus.SERVICE_UNAVAILABLE),
     EXTERNAL_SERVICE_UNAVAILABLE(5002, "Внешний сервис не отвечает", HttpStatus.BAD_GATEWAY),
-    FILE_STORAGE_ERROR(5003, "Ошибка при загрузке фото в облако", HttpStatus.INTERNAL_SERVER_ERROR);
+    FILE_STORAGE_ERROR(5003, "Ошибка при загрузке фото в облако", HttpStatus.INTERNAL_SERVER_ERROR),
+    HTTP_CLIENT_ERROR_CODE(5004, "Ошибка на стороне внешнего клиента", HttpStatus.BAD_REQUEST);
 
     private final int code;
     private final String message;
@@ -48,5 +51,13 @@ public enum Error {
         this.code = code;
         this.message = message;
         this.httpStatus = httpStatus;
+    }
+
+    //для быстрого поиска ошибок по коду
+    public static Error byCode(int code) {
+        return Arrays.stream(values())
+                .filter(e -> e.code == code)
+                .findFirst()
+                .orElse(INTERNAL_SERVICE_ERROR);
     }
 }
