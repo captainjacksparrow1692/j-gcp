@@ -48,17 +48,9 @@ public enum Error {
     private final String message;
     private final HttpStatusCode httpStatus;
 
-    Error(int code, String message, HttpStatus httpStatus) {
+    Error(int code, String message, HttpStatusCode httpStatus) {
         this.code = code;
         this.message = message;
         this.httpStatus = httpStatus;
-    }
-
-    //для быстрого поиска ошибок по коду
-    public static Error byCode(int code) {
-        return Arrays.stream(values())
-                .filter(e -> e.code == code)
-                .findFirst()
-                .orElse(INTERNAL_SERVICE_ERROR);
     }
 }
