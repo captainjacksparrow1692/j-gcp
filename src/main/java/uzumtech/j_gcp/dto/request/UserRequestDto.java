@@ -1,5 +1,6 @@
 package uzumtech.j_gcp.dto.request;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.*;
 import lombok.*;
 import uzumtech.j_gcp.constant.enums.DocumentType;
@@ -44,14 +45,18 @@ public record UserRequestDto(
         @NotNull(message = "Тип документа обязателен")
         DocumentType documentType,
 
+        @JsonFormat(pattern = "yyyy-MM-dd")
         @PastOrPresent(message = "Дата выдачи не может быть в будущем")
         LocalDate issueDate,
 
+        @JsonFormat(pattern = "yyyy-MM-dd")
         @Future(message = "Срок действия документа должен быть в будущем")
         LocalDate expiryDate,
 
         @NotBlank(message = "Гражданство обязательно")
         String citizenship,
+
+        @JsonFormat(pattern = "yyyy-MM-dd")
         @PastOrPresent(message = "Дата смерти должна быть в прошлом или настоящем")
         LocalDate deathDate
 
