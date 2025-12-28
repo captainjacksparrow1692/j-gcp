@@ -18,6 +18,7 @@ spring:
   jpa:
     hibernate:
       ddl-auto: validate
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
     open-in-view: false
     show-sql: ${SHOW_SQL:true}
     properties:
@@ -59,14 +60,14 @@ spring:
       database: 0
       timeout: ${REDIS_CONNECT_TIMEOUT:2000}
       default-ttl: ${REDIS_DEFAULT_TTL:30000}
-      gcp-ttl: ${REDIS_ORDER_TTL:5000}
-      user-ttl: ${REDIS_MERCHANT_TTL:5000}
+      order-ttl: ${REDIS_ORDER_TTL:5000}
+      merchant-ttl: ${REDIS_MERCHANT_TTL:5000}
 
 
 
 # Tomcat configuration (milliseconds)
 server:
-  port: ${SERVER_PORT:8080}
+  port: ${SERVER_PORT:8081}
   tomcat:
     accept-count: ${TOMCAT_ACCEPT_COUNT:100}
     max-connections: ${TOMCAT_MAX_CONNECTIONS:1000}
