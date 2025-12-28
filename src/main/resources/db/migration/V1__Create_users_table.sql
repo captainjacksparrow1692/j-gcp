@@ -9,7 +9,7 @@ CREATE TABLE users (
                        age INTEGER NOT NULL,
                        document_type VARCHAR(50) NOT NULL,
                        issue_date DATE NOT NULL,
-                       expiry_date DATE NOT NULL,
+                       expiration_date DATE NOT NULL,
                        citizenship VARCHAR(100) NOT NULL,
                        death_date DATE,
                        CONSTRAINT chk_age CHECK (age >= 0 AND age <= 150),
