@@ -52,24 +52,40 @@ public class UserController {
         return ResponseEntity.ok(userService.getAllUsers(pageable));
     }
 
+    @GetMapping("/search/email")
+    public ResponseEntity<UserResponseDto> getUserByEmail(@RequestParam String email) {
+        return ResponseEntity.ok(userService.getUserByEmail(email));
+    }
+
+    @GetMapping("/search/citizenship")
+    public ResponseEntity<Page<UserResponseDto>> getUserByCitizenship(
+            @RequestParam String citizenship,
+            @PageableDefault Pageable pageable) {
+        return ResponseEntity.ok(userService.getUserByCitizenship(citizenship, pageable));
+    }
+
     @PostMapping("/{id}/mark-dead")
     public ResponseEntity<MarkDeadResponseDto> markUserAsDead(
             @PathVariable Long id,
             @RequestBody @Valid MarkDeadRequestDto request) {
         log.info("REST request to mark User as dead, id: {}", id);
-        var deathDate = request.deathDate();
-        return ResponseEntity.ok(userService.markUserAsDead(id, deathDate));
+        return ResponseEntity.ok(userService.markUserAsDead(id, request.deathDate()));
     }
 
     @GetMapping("/count")
-    public ResponseEntity<Long> getUsersCountByStatus(@RequestParam UserService.Status status) {
+    public ResponseEntity<Long> getUsersCountByStatus(@RequestParam String status) {
         log.debug("REST request to get users count by status: {}", status);
-        return ResponseEntity.ok(userService.getUsersCountByStatus(status));
+        return ResponseEntity.ok(userService.getUsersCountByStatus(UserService.Status.valueOf(status)));
     }
 
-    @GetMapping("/documents/expired")
+    @GetMapping("/expired")
     public ResponseEntity<Page<UserResponseDto>> getExpired(@PageableDefault(size = 20) Pageable pageable) {
         log.debug("REST request to get users with expired documents");
         return ResponseEntity.ok(userService.getUsersWithExpiredDocuments(pageable));
+    }
+
+    @GetMapping("/filter/alive")
+    public ResponseEntity<Page<UserResponseDto>> getAlive(@PageableDefault Pageable pageable) {
+        return ResponseEntity.ok(userService.getAllAliveUsers(pageable));
     }
 }
