@@ -28,7 +28,7 @@ public class UserController {
 
     UserService userService;
 
-    @PostMapping
+    @PostMapping("/api/v1/users/create")
     public ResponseEntity<UserResponseDto> createUser(@RequestBody @Valid UserRequestDto userRequestDto) {
         log.info("REST request to save User : {}", userRequestDto.pinfl());
         return new ResponseEntity<>(userService.createUser(userRequestDto), HttpStatus.CREATED);
