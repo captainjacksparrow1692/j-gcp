@@ -1,9 +1,10 @@
 package j_gcp.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import lombok.*;
 import j_gcp.constant.enums.DocumentType;
 import j_gcp.constant.enums.Gender;
+import lombok.Builder;
+
 import java.time.LocalDate;
 
 @JsonFormat(pattern = "yyyy-MM-dd")

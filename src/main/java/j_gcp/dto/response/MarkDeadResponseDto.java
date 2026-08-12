@@ -1,7 +1,7 @@
 package j_gcp.dto.response;
 
-import lombok.*;
 import j_gcp.constant.enums.LifeStatus;
+import lombok.Builder;
 
 import java.time.LocalDate;
 
