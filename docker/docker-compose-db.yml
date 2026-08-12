@@ -1,0 +1,28 @@
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: postgres_db
+
+    ports:
+      - "5432:5432"
+
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 9376570167
+
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+    restart: always
+
+    networks:
+      - j-gcp-network
+
+volumes:
+  postgres_data:
+
+networks:
+  j-gcp-network:
+    driver: bridge
+    name: j-gcp-network
