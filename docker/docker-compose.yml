@@ -1,25 +1,22 @@
 services:
-  db:
-    image: postgres:16-alpine # Используем легкий и актуальный образ PostgreSQL
-    container_name: postgres_db
+  app:
+    build: .
+    container_name: j-gcp-app
 
-    # Порт для доступа к базе данных
-    # 5432 — стандартный порт PostgreSQL
     ports:
-      - "5432:5432"
+      - "8080:8080"
 
     environment:
-      POSTGRES_DB: postgres         # Имя базы данных, которая будет создана
-      POSTGRES_USER: postgres           # Имя суперпользователя
-      POSTGRES_PASSWORD: 9376570167   # Пароль для суперпользователя
+      DATASOURCE_URL: jdbc:postgresql://postgres_db:5432/postgres
+      DATASOURCE_USERNAME: postgres
+      DATASOURCE_PASSWORD: 9376570167
 
-    # Сохранение данных в томе (для постоянства)
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-
-    # Политика перезапуска
     restart: always
 
-# Объявление внешнего тома для сохранения данных
-volumes:
-  postgres_data:
+    networks:
+      - j-gcp-network
+
+networks:
+  j-gcp-network:
+    external: true
+    name: j-gcp-network
